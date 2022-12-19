@@ -1,16 +1,16 @@
-(load "example-values.lisp")
 (load "board.lisp")
 (load "node.lisp")
 
+(load "example-values.lisp")
 (load "unit-tests.lisp")
 
 (defpackage #:main
     (:use
         #:COMMON-LISP
         #:COMMON-LISP-USER
-        #:example-values
         #:board
         #:node
+        #:example-values
         #:unit-tests
     )
     (:import-from
