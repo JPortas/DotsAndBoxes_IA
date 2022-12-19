@@ -1,14 +1,15 @@
-(load "test-values.lisp")
+(load "example-values.lisp")
 (load "node.lisp")
-(load "impl.lisp")
+
+(load "tests.lisp")
 
 (defpackage #:main
     (:use
         #:COMMON-LISP
         #:COMMON-LISP-USER
         #:node
-        #:test-values
-        #:impl
+        #:example-values
+        #:tests
     )
     (:import-from
         #:COMMON-LISP-USER #:exit
