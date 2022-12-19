@@ -16,6 +16,8 @@
         #:replace-arc-connection-in-position
         #:draw-horizontal-arc
         #:draw-vertical-arc
+		#:count-boxes
+		#:get-number-of-closed-boxes
     )
 )
 
@@ -214,6 +216,55 @@ Return <<
 				(get-horizontal-arcs board)
 				(replace-arc-connection-in-position (get-vertical-arcs board) row col x)	  
 			)
+		)
+	)
+)
+
+(defun count-boxes (horizontal-arcs vertical-arcs &optional (row 1) (col 1))
+  "Count the total number of closed boxes in a dots and boxes game.
+   HORIZONTAL-ARCS is a list of lists representing the horizontal arcs, with 1 indicating
+   that an arc is drawn and 0 indicating that it is not.
+   VERTICAL-ARCS is a list of lists representing the vertical arcs, with 1 indicating
+   that an arc is drawn and 0 indicating that it is not.
+   ROW and COL are the current row and column being checked."
+   	(cond 
+		(
+			(= row (list-length horizontal-arcs))
+         	0
+		) ; Base case: We have reached the end of the matrix, so there are no more boxes to count
+        (
+			(and 
+				(= 1 (get-arc-in-position horizontal-arcs row col))
+              	(= 1 (get-arc-in-position vertical-arcs col row))
+				(= 1 (get-arc-in-position horizontal-arcs (1+ row) col))
+				(= 1 (get-arc-in-position vertical-arcs (1+ col) row))
+			)
+         	(+ 1 
+				(if 
+					(< col (list-length (car horizontal-arcs)))
+                  	(count-boxes horizontal-arcs vertical-arcs row (1+ col)) ; Move to the next column
+                  	(count-boxes horizontal-arcs vertical-arcs (1+ row) 1) ; Move to the first column of the next row
+				)
+			)
+		) 
+        (t
+         	(if 
+				(< col (list-length (car horizontal-arcs)))
+             	(count-boxes horizontal-arcs vertical-arcs row (1+ col)) ; Move to the next column
+             	(count-boxes horizontal-arcs vertical-arcs (1+ row) 1) ; Move to the first column of the next row
+			)
+		)
+	)
+) 
+
+(defun get-number-of-closed-boxes (board)
+	(cond
+		(
+			(null board)
+			nil
+		)
+		(t
+			(count-boxes (get-horizontal-arcs board) (get-vertical-arcs board))
 		)
 	)
 )
