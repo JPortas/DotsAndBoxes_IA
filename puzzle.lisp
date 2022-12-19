@@ -7,8 +7,8 @@
 (defun tabuleiro-teste ()
   "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
 	'(
-		((0 0 0) (0 0 1) (0 1 1) (0 0 1))
-		((0 0 0) (0 1 1) (1 0 1) (0 1 1))
+		((0 0 1 0) (1 1 1 1) (0 0 1 1) (0 0 1 1) (0 0 1 1))
+		((0 0 1 1) (0 0 1 1) (1 1 1 1) (1 0 1 1) (0 1 1 1))
 	)
 )
 
@@ -116,3 +116,53 @@
 		)
 	)
 )
+
+(defun count-boxes (horizontal-arcs vertical-arcs row col)
+  "Count the total number of closed boxes in a dots and boxes game.
+   HORIZONTAL-ARCS is a list of lists representing the horizontal arcs, with 1 indicating
+   that an arc is drawn and 0 indicating that it is not.
+   VERTICAL-ARCS is a list of lists representing the vertical arcs, with 1 indicating
+   that an arc is drawn and 0 indicating that it is not.
+   ROW and COL are the current row and column being checked."
+   	(cond 
+		(
+			(= row (list-length horizontal-arcs))
+         	0
+		) ; Base case: We have reached the end of the matrix, so there are no more boxes to count
+        (
+			(and 
+				(= 1 (get-arco-na-posicao row col horizontal-arcs))
+              	(= 1 (get-arco-na-posicao col row vertical-arcs))
+				(= 1 (get-arco-na-posicao (1+ row) col horizontal-arcs))
+				(= 1 (get-arco-na-posicao (1+ col) row vertical-arcs))
+			)
+         	(+ 1 
+				(if 
+					(< col (list-length (car horizontal-arcs)))
+                  	(count-boxes horizontal-arcs vertical-arcs row (1+ col)) ; Move to the next column
+                  	(count-boxes horizontal-arcs vertical-arcs (1+ row) 1) ; Move to the first column of the next row
+				)
+			)
+		) 
+        (t
+         	(if 
+				(< col (list-length (car horizontal-arcs)))
+             	(count-boxes horizontal-arcs vertical-arcs row (1+ col)) ; Move to the next column
+             	(count-boxes horizontal-arcs vertical-arcs (1+ row) 1) ; Move to the first column of the next row
+			)
+		)
+	)
+) 
+
+(defun get-number-of-closed-boxes (board)
+	(cond
+		(
+			(null board)
+			nil
+		)
+		(t
+			(count-boxes (get-arcos-horizontais board) (get-arcos-verticais board) 1 1)
+		)
+	)
+)
+
