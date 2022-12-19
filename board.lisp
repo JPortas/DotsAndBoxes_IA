@@ -83,12 +83,12 @@ Return <<
 	)
 )
 
-(defun get-arc-in-position (orientation-list row position)
+(defun get-arc-in-position (orientation-list row col)
 "Obtem o estado de se de um ponto ao outro recebido numa determinada orientação estão ligados. Se for 1 tem uma linha a fechar os 2 pontos
 caso contrário não tem uma linha a fechar esses 2 pontos
 Parameters >>
     row (number): O número que corresponte à posição de um sub-lista numa lista de ligações horizontais ou verticais.
-    position (number): O número que corresponde à posição de uma ligação entre dois pontos relativamente á lista de ligações (horizontai ou verticais) recebida e ao número do row escolhido.
+    col (number): O número que corresponde à posição de uma ligação entre dois pontos relativamente á lista de ligações (horizontai ou verticais) recebida e ao número do row escolhido.
     orientation-list (list): Lista relativamente à ligações horizontais ou vertiacas da qual vai ser extraida a informação.
 Return:
     1: Se está uma linha a ligar 2 pontos
@@ -96,11 +96,11 @@ Return:
 "
 	(cond
 		(
-			(or (null orientation-list) (< row 1) (< position 1))
+			(or (null orientation-list) (< row 1) (< col 1))
 			nil
 		)
 		(T
-			(nth (- position 1) (nth (- row 1) orientation-list))
+			(nth (- col 1) (nth (- row 1) orientation-list))
 		)
 	)
 )
@@ -124,11 +124,11 @@ Return <<
     )
 )
 
-(defun replace-arc-connection (orientation-list-row position &optional (x 1))
+(defun replace-arc-connection (arcs-state-part-list index &optional (x 1))
 "Recebe a posição da lista de conecxões de um corredor horizontal ou vertical e o corredor e substitui por um valor.
 Parameters >>
     position (number): Posição numa lista com os estados das linhas num corredor ex: (1 0 1)
-    orientation-list-row (list): Corredor de uma lista de horizontais ou verticais. ex: (1 0 1)
+    arcs-state-part-list (list): Corredor de uma lista de horizontais ou verticais. ex: (1 0 1)
     [optional]
     x (number): Valor pelo qual vai ser substituido na lista recebida e na posição indicada.
 Return <<
@@ -136,20 +136,20 @@ Return <<
 "
 	(cond
 		(
-			(or (null orientation-list-row) (< position 1))
+			(or (null arcs-state-part-list) (< index 1))
 			nil
 		)
 		(
-			(= position 1)
-			(cons x (cdr orientation-list-row))
+			(= index 1)
+			(cons x (cdr arcs-state-part-list))
 		)
 		(T
-			(cons (car orientation-list-row) (replace-arc-connection (cdr orientation-list-row) (- position 1) x))
+			(cons (car arcs-state-part-list) (replace-arc-connection (cdr arcs-state-part-list) (- index 1) x))
 		)
 	)
 )
 
-(defun replace-arc-connection-in-position (orientation-list row position  &optional (x 1))
+(defun replace-arc-connection-in-position (orientation-list row col  &optional (x 1))
 "Recebe a posição da lista de conecxões horizontal ou vertical, o corredor dentro da lista das conexções (horizontai ou verticias) e a posição em que se vai mudar o valor.
 Parameters >>
     position (number): Posição numa lista com os estados das linhas num corredor ex: (1 0 1)
@@ -161,20 +161,20 @@ Return <<
 "
 	(cond
 		(
-			(or (null orientation-list) (< row 1) (< position 1) (null (get-arc-in-position orientation-list row position)))
+			(or (null orientation-list) (< row 1) (< col 1) (null (get-arc-in-position orientation-list row col)))
 			nil
 		)
 		(
 			(= row 1)
-			(cons (replace-arc-connection (car orientation-list) position x) (cdr orientation-list))
+			(cons (replace-arc-connection (car orientation-list) col x) (cdr orientation-list))
 		)
 		(T
-			(cons (car orientation-list) (replace-arc-connection-in-position (cdr orientation-list) (- row 1) position x))
+			(cons (car orientation-list) (replace-arc-connection-in-position (cdr orientation-list) (- row 1) col x))
 		)
 	)
 )
 
-(defun draw-horizontal-arc (board row position &optional (x 1))
+(defun draw-horizontal-arc (board row col &optional (x 1))
 "Altera a lista de horizontai para colocar uma linha horizontal na posição indicada.
 Parameters >>
     board (list): Tabuleiro de jogo
@@ -185,34 +185,34 @@ Return <<
 "
 	(cond
 		(
-			(or (null board) (< row 1) (< position 1) 
-				(null (get-arc-in-position (get-horizontal-arcs board) row position))
-				(/= (get-arc-in-position (get-horizontal-arcs board) row position) 0)
+			(or (null board) (< row 1) (< col 1) 
+				(null (get-arc-in-position (get-horizontal-arcs board) row col))
+				(/= (get-arc-in-position (get-horizontal-arcs board) row col) 0)
 			)
 			nil
 		)
 		(T
 			(list
-				(replace-arc-connection-in-position (get-horizontal-arcs board) row position x)	  
+				(replace-arc-connection-in-position (get-horizontal-arcs board) row col x)	  
 				(get-vertical-arcs board)
 			)
 		)
 	)
 )
 
-(defun draw-vertical-arc (board row position &optional (x 1))
+(defun draw-vertical-arc (board col row &optional (x 1))
 	(cond
 		(
-			(or (null board) (< row 1) (< position 1) 
-				(null (get-arc-in-position (get-vertical-arcs board) row position))
-				(/= (get-arc-in-position (get-vertical-arcs board) row position) 0)
+			(or (null board) (< row 1) (< col 1) 
+				(null (get-arc-in-position (get-vertical-arcs board) row col))
+				(/= (get-arc-in-position (get-vertical-arcs board) row col) 0)
 			)
 			nil
 		)
 		(T
 			(list
 				(get-horizontal-arcs board)
-				(replace-arc-connection-in-position (get-vertical-arcs board) row position x)	  
+				(replace-arc-connection-in-position (get-vertical-arcs board) row col x)	  
 			)
 		)
 	)
