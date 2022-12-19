@@ -1,8 +1,8 @@
-;;;; node.lisp
-;;;; Possuí funções para consulta e criação de estados e valores de estados e seletores para os nós
+;;;; board.lisp
+;;;; Possuí funções para obter, modificar e operar estados de um tabuleiro de jogo.
 ;;;; Autor: Lucas Freixieiro e João Portas
 
-(defpackage :node
+(defpackage :board
     (:use
         #:COMMON-LISP
     )
@@ -19,7 +19,7 @@
     )
 )
 
-(in-package :node)
+(in-package :board)
 
 (defun new-node (state depth &optional (parent-node NIL))
     (list state depth parent-node)

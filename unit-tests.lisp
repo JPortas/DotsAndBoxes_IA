@@ -2,10 +2,10 @@
 ;;;; Para realizar testes ás funções defenidas e comparar com os valores esperados.
 ;;;; Autor: João Portas
 
-(defpackage :tests
+(defpackage :unit-tests
     (:use
         #:cl
-        #:node
+        #:board
         #:example-values
     )
     (:export
@@ -13,7 +13,7 @@
     )
 )
 
-(in-package :tests)
+(in-package :unit-tests)
 
 (defun run-tests ()
     (format T "Testeing... ~%")
