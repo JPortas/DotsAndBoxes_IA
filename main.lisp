@@ -1,5 +1,6 @@
 (load "example-values.lisp")
 (load "board.lisp")
+(load "node.lisp")
 
 (load "unit-tests.lisp")
 
@@ -7,8 +8,9 @@
     (:use
         #:COMMON-LISP
         #:COMMON-LISP-USER
-        #:board
         #:example-values
+        #:board
+        #:node
         #:unit-tests
     )
     (:import-from
