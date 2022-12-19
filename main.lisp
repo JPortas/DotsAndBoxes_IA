@@ -1,3 +1,4 @@
+(load "test-values.lisp")
 (load "node.lisp")
 (load "impl.lisp")
 
@@ -6,6 +7,7 @@
         #:COMMON-LISP
         #:COMMON-LISP-USER
         #:node
+        #:test-values
         #:impl
     )
     (:import-from
@@ -19,8 +21,12 @@
 
 (in-package :main)
 
-
+;execute
+;sbcl --load .\main.lisp --eval '(in-package #:main)' --eval '(main)'
+;to start your jorney or
+;sbcl --load .\main.lisp --eval '(in-package #:main)'
+;to teste by your own
 (defun main ()
-    (format T "Heyo World!")
+    (format T "Welcome to IA 0.1 :)")
 )
 
