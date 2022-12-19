@@ -15,6 +15,7 @@
         #:replace-arc-connection
         #:replace-arc-connection-in-position
         #:draw-horizontal-arc
+        #:draw-vertical-arc
     )
 )
 
@@ -143,7 +144,7 @@ Return <<
 			(cons x (cdr orientation-list-row))
 		)
 		(T
-			(cons (car orientation-list-row) (replace-arc-connection (- position 1) (cdr orientation-list-row) x))
+			(cons (car orientation-list-row) (replace-arc-connection (cdr orientation-list-row) (- position 1) x))
 		)
 	)
 )
@@ -194,6 +195,24 @@ Return <<
 			(list
 				(replace-arc-connection-in-position (get-horizontal-arcs board) row position x)	  
 				(get-vertical-arcs board)
+			)
+		)
+	)
+)
+
+(defun draw-vertical-arc (board row position &optional (x 1))
+	(cond
+		(
+			(or (null board) (< row 1) (< position 1) 
+				(null (get-arc-in-position (get-vertical-arcs board) row position))
+				(/= (get-arc-in-position (get-vertical-arcs board) row position) 0)
+			)
+			nil
+		)
+		(T
+			(list
+				(get-horizontal-arcs board)
+				(replace-arc-connection-in-position (get-vertical-arcs board) row position x)	  
 			)
 		)
 	)
