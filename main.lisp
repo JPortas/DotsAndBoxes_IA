@@ -1,6 +1,7 @@
 (load "board.lisp")
 (load "node.lisp")
 
+(load "not-informed-search.lisp")
 (load "informed-search.lisp")
 
 (load "example-values.lisp")
@@ -13,6 +14,7 @@
         #:board
         #:node
         #:informed-search
+        #:not-informed-search
         #:example-values
         #:unit-tests
     )
