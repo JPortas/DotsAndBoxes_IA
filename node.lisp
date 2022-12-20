@@ -13,10 +13,15 @@
         #:sucessors-to-horizontal
         #:sucessors-to-vertical
         #:get-successors
+        #:heuristic-eval-by-remaining-to-close
     )
 )
 
 (in-package :node)
+
+(defun heuristic-eval-by-remaining-to-close (objective-close-squares current-closed-squares)
+    (- objective-close-squares current-closed-squares)
+)
 
 (defun new-successor (board depth parent &optional heuristic)
 "Cria um novo sucessor em que receber uma tabuleiro, a profundidade e o nó pai e gera um nó que é uma lista ((board) depth (parent))
@@ -93,9 +98,18 @@ Se for Null retorna NIL. Se a heuristica não existir retorna NIL."
     )
 )
 
-(defun get-successors (node)
+(defun get-successors (node &optional fn-heuristic)
 "Obtem e retorna todos os sucessores do no recebidos."
-    (append (sucessors-to-horizontal node) (sucessors-to-vertical node))
+;Heuristica em desenvolvimento
+    (cond
+        (
+            (null fn-heuristic)
+            (append (funcall 'sucessors-to-horizontal node) (funcall 'sucessors-to-vertical node))
+        )
+        (T
+            (funcall fn-heuristic 5 3)
+        )
+    ) 
 )
 
 (defun objective-node (node objective-closed-boxes)
@@ -104,11 +118,11 @@ Se for igual ou maior retorna T. Se for menor retorna NIL
 (ATUALMENTE NÃO FUNCIONANDO COMO DIZ ACIMA E SIM COMPARANDO COM UMA SOLUÇÃO ESTÁTICA)"
     (cond
         (
-            (/= objective-closed-boxes 1)
-            NIL
+            (>= (get-number-of-closed-boxes (get-node-state node)) objective-closed-boxes)
+            T
         )
         (T
-            (equal (get-node-state node) '(((0 1 0) (0 1 1) (0 1 1) (0 1 1))((0 0 0) (1 1 1) (1 1 1) (0 1 1))))
+            NIL
         )
     )
 )
