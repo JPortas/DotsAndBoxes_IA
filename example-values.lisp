@@ -20,6 +20,10 @@
         #:ex-board-2x6
         #:ex-node-6x2
         #:ex-node-2x6
+        #:ex-node-2x2
+        #:ex-board-2x2
+        #:generated-successors
+        #:existing-closed
     )
 )
 
@@ -51,6 +55,14 @@
 	'(
 		((0 0) (0 0) (0 1) (0 0) (0 0))
 		((0 0 0 0) (0 1 1 0) (1 0 1 0))
+	)
+)
+
+(defun ex-board-2x2 ()
+  "Retorna um tabuleiro 4x2 (3 arcos na vertical por 2 arcos na horizontal)"
+	'(
+		((0 0) (0 0) (0 0))
+		((0 0) (0 0) (0 0))
 	)
 )
 
@@ -149,6 +161,20 @@ Pode incluir heuristica ou não por parametro."
     )
 )
 
+(defun ex-node-2x2 (&optional heuristic)
+"Retorna um nó com um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal).
+Pode incluir heuristica ou não por parametro."
+    (cond
+        (
+            (null heuristic)
+            (new-successor (ex-board-2x2) 0 NIL)
+        )
+        (T
+            (new-successor (ex-board-2x2) 0 NIL 10)
+        )
+    )
+)
+
 (defun ex-node (&optional heuristic)
 "Retorna um nó com um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal).
 Pode incluir heuristica ou não por parametro."
@@ -160,5 +186,63 @@ Pode incluir heuristica ou não por parametro."
         (T
             (new-successor (ex-board) 0 NIL 10)
         )
+    )
+)
+
+(defun generated-successors ()
+    (list
+        (list (new-successor 
+            '(
+                ((0 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL))
+        (list (new-successor 
+            '(
+                ((1 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL))
+        (list (new-successor 
+            '(
+                ((0 1) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL))
+        (list (new-successor 
+            '(
+                ((0 0) (1 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL))
+    )
+)
+
+(defun existing-closed ()
+    (list
+        (list (new-successor 
+            '(
+                ((0 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL))
+        (list (new-successor 
+            '(
+                ((0 0) (0 0) (0 0))
+		        ((1 0) (1 0) (0 0))
+            )
+        0 NIL))
+        (list (new-successor 
+            '(
+                ((1 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL))
+        (list (new-successor 
+            '(
+                ((0 0) (1 0) (0 0))
+		        ((0 1) (0 0) (0 0))
+            )
+        0 NIL))
     )
 )

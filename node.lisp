@@ -51,7 +51,7 @@ Opcionalmente recebe o valor da heurística que gera um nó que é uma lista com
     (cond
         (
             (null heuristic)
-            (list board depth parent)
+            (list board depth NIL)
         )
         (T
             (list board depth heuristic parent)
