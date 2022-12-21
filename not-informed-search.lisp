@@ -20,14 +20,14 @@
 (in-package :not-informed-search)
 
 (defun dfs-init (start-node closed-boxes-objective max-depth)
-    (funcall 'dfs closed-boxes-objective max-depth (list start-node))
+    (funcall 'dfs closed-boxes-objective max-depth (list start-node) NIL 0)
 )
 
-(defun dfs (closed-boxes-objective max-depth OPEN-LIST &optional CLOSED-LIST)
+(defun dfs (closed-boxes-objective max-depth OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
     (cond
         (
             (null OPEN-LIST)
-            NIL
+            (list NIL number-of-generated-nodes)
         )
         (T
             (let
@@ -45,6 +45,7 @@
                                 NIL
                             )
                             (append (list (car OPEN-LIST)) CLOSED-LIST)
+                            number-of-generated-nodes
                         )
                     )
                     (T
@@ -63,10 +64,11 @@
                                             (funcall 'get-successors-not-in-closed successors (append OPEN-LIST CLOSED-LIST))
                                         )
                                         (append (list (car OPEN-LIST)) CLOSED-LIST)
+                                        (+ number-of-generated-nodes (list-length successors))
                                     )
                                 )
                                 (T
-                                    objective-node
+                                    (list objective-node number-of-generated-nodes)
                                 )
                             )
                         )
@@ -78,14 +80,14 @@
 )
 
 (defun bfs-init (start-node closed-boxes-objective)
-    (funcall 'bfs closed-boxes-objective (list start-node))
+    (funcall 'bfs closed-boxes-objective (list start-node) NIL 0)
 )
 
-(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST)
+(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
     (cond
         (
             (null OPEN-LIST)
-            NIL
+            (list NIL number-of-generated-nodes)
         )
         (T
             (let 
@@ -106,10 +108,11 @@
                                     (funcall 'get-successors-not-in-closed successors (append OPEN-LIST CLOSED-LIST))
                                 )
                                 (append (list (car OPEN-LIST)) CLOSED-LIST)
+                                (+ number-of-generated-nodes (list-length successors))
                             )
                         )
                         (T
-                            objective-node
+                            (list objective-node number-of-generated-nodes)
                         )
                     )
                 )
