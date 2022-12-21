@@ -17,7 +17,7 @@
 (in-package :informed-search)
 
 ;(time (a-star-init (ex-node 7) 8 'heuristic-eval-by-remaining-arcs))
-(defun a-star-init (start-node closed-boxes-objective fn-heuristic &rest rest)
+(defun a-star-init (start-board closed-boxes-objective fn-heuristic &rest rest)
 "Recebe o no de inicio, quantidade de caixas fechadas no objetivo e a função heuristica.
 A fn-heuristic seria '[heuristiva] [parameters] que recebe o simbolo da função euristica e os parametros.
 Têm que estar defenidos no package node por enquanto.
@@ -30,7 +30,7 @@ Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penet
         )
         (first time-info)
     )|#
-    (apply 'a-star fn-heuristic closed-boxes-objective (list start-node) NIL 0 0 rest)
+    (apply 'a-star fn-heuristic closed-boxes-objective (list (funcall 'new-successor start-board 0 NIL (apply 'eval-heuristic fn-heuristic (append (list start-board) rest)))) NIL 0 0 rest)
 )
 
 (defun a-star (fn-heuristic closed-boxes-objective OPEN-LIST &optional CLOSED-LIST (number-of-generated-nodes 0) (number-of-expanded-nodes 0) &rest rest)
