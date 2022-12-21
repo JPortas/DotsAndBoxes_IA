@@ -61,7 +61,30 @@ O código para estes testes não foi todo implementado pelo que está incompleto
 
 ## Ficheiros de Dados
 
-problemas.dat
+O programa executa as operações sobre os seguintes ficheiros:
+
+| Ficheiro | Operações |
+| :--- | :-----------: |
+| problemas.dat | Leitura |
+| desempenho.dat | Escrita |
+
+#### problemas.dat
+Tem a informação de problemas a resolver defenidos dos quais o programa carrega a informação.
+Encontra-se na pasta root e a informação é estruturada na forma semelhante a uma lista sendo composta por:
+```
+(([board]) [Caixas Objetivo])
+```
+em que:
+* `[board]` é um tipo abstrato de dados referido neste documento mais a frente.
+* `[Caixas objetivo]` a quantidade de caixas que devem ser fechadas para a conclusão do puzzle.
+
+Este fucheiro guarda a informação de vários tabuleiros pelo que cada um é separado por ` / ` do gênero:
+```lisp
+(([board]) [Caixas Objetivo]) / (([board]) [Caixas Objetivo]) / (([board]) [Caixas Objetivo])
+```
+
+#### problemas.dat
+Guarda a informação relativamente aos problemas que se solicita a resolução. A este vai sendo adicionada a informação conforme se solicita a execução dos algoritmos sobre os problemas a resolver. É possível encontrar este ficheiro na pasta root.
 
 ## Tipos Abstrados de Dados
 
@@ -191,81 +214,181 @@ O algoritmo BFS é implementado no ficheiro `not-informed-search.lisp` em é cha
     ...
 )
 ```
-Esta função recebe como parametros o uma `board` que será o estado inicial e o número de caixas que têm de estar ffechadas como estado final.
+Esta função recebe como parametros `board` que será o estado inicial e o número de caixas que têm de estar fechadas como estado final.
 
 Depois esta função cria o `node` que vai ser colocado na lista de abertos assim iniciando o ciclo do BFS com a função seguinte:
 ```lisp
-(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
+(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST
+    (number-of-generated-nodes 0)
+    (number-of-expanded-nodes 0))
     ...
 )
 ```
-Esta função vai usar o closed-boxes-objective para verificar os nós gerados têm uma quantidade de caixas fechadas totais igual ou maior a essa variável, pelo que se isso se confirmar deverá ser o nó solução o qual é retornado. A OPEN-LIST e CLOSED-LIST são para manter o registo dos nós ainda não expandidos e os que ja foram e por fim o number-of-generated-node para fazer o traking dos nós gerados.
+Esta função tem como parametros:
+* closed-boxes-objective:
+    * Utilizado para verificar se os `node` gerados têm uma quantidade de caixas fechadas maior ou igual ao parametro para determinar se algum é o `node` solução.
+* OPEN-LIST:
+    * Para manter um registo dos `node` que ainda não foram expandidos. Se esta lista for vaiza o algoritmo termina pois não existem mais `node` para expandir.
+* CLOSED-LIST:
+    * Um campo opcional que é defenido posteriormente no algoritmo para guardar os `node` que já foram expandidos por forma a evitar gerar novos `node` com o mesmo estado, ou seja `board`.
+* number-of-generated-nodes:
+    * Opcional e que deverá ser 0 no início para manter um registo do número de nós gerados para o cálculo da ramificação e penetrância.
+* number-of-expanded-nodes
+    * Opcional e que deverá ser 0 no início para manter um registo do número de nós que foram expandidos para o cálculo da ramificação.
 
-Abaixo encontra-se a implementação completa da função:
-
-```lisp
-(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
-    (cond
-        (
-            (null OPEN-LIST)
-            (list NIL number-of-generated-nodes)
-        )
-        (T
-            (let 
-                (
-                    (successors (funcall 'get-successors (car OPEN-LIST)))
-                )
-                (let
-                    (
-                        (objective-node (funcall 'get-objective-node closed-boxes-objective successors))
-                    )
-                    (cond
-                        (
-                            (null objective-node)
-                            (bfs
-                                closed-boxes-objective
-                                (funcall 'add-to-open-list-bfs
-                                    (cdr OPEN-LIST)
-                                    (funcall 'get-successors-not-in-closed successors (append OPEN-LIST CLOSED-LIST))
-                                )
-                                (append (list (car OPEN-LIST)) CLOSED-LIST)
-                                (+ number-of-generated-nodes (list-length successors))
-                            )
-                        )
-                        (T
-                            (list objective-node (+ number-of-generated-nodes (list-length successors)))
-                        )
-                    )
-                )
-            )
-        )
-    )
-)
-```
+<!--Abaixo encontra-se a implementação completa da função:-->
 
 A função é recursiva em que as suas condições de paragem são:
 * Se a lista OPEN-LIST é NIL, pois não há mais nós para expandir
 * Se um dos nós sucessores tem um número de caixas fechadas às recebidas por parametro.
 
-O retorno da função será uma estrutura do tipo:
+Como retorno a funções retorna uma lista com o formato:
 ```lisp
-'(([Nó solução]) [Número de nós gerados])
+'(([Nó solução]) [Qtn nós gerados] [Qtn nós expandidos] [Fator ramificação] [Penetrância])
 ```
-Em que o `[Nó solução]` é o nó objetivo (o que tem o número de caixas fechadas) e `[Número de nós gerados]` a quantidade de nós gerados ao todo pelo algoritmo. 
+em que:
+* `[Nó solução]` é o nó objetivo (o que tem o número de caixas fechadas). Se não encontrar a solução este campo será NIL.
+* `[Qtn nós gerados]` com a quantidade de nós gerados ao todo pelo algoritmo.
+* `[Qtn nós expandidos] ` com a quantidade de nós que foram expandidos.
+* `[Fator ramificação]` com o valor do fator de ramificação do algoritmo.
+* `[Penetrância]` com o valor da penetrância do algoritmo. Se não encontrar a solução este campo será NIL.
 
 ### DFS
 
-...
+O algoritmo DFS é implementado no ficheiro `not-informed-search.lisp` e é chamado através da função:
+```lisp
+(defun dfs-init (start-board closed-boxes-objective max-depth)
+    ...
+)
+```
+Esta função recebe como parametros `board` que será o estado inicial e o número de caixas que têm de estar fechadas como estado final e o máximo de profundidade da pesquisa.
+
+Depois esta função cria o `node` que vai ser colocado na lista de abertos assim iniciando o ciclo do DFS com a função seguinte:
+```lisp
+(defun dfs (closed-boxes-objective max-depth OPEN-LIST &optional
+    CLOSED-LIST
+    (number-of-generated-nodes 0)
+    (number-of-expanded-nodes 0))
+    ...
+)
+```
+Esta função tem como parametros:
+* closed-boxes-objective:
+    * Utilizado para verificar se os `node` gerados têm uma quantidade de caixas fechadas maior ou igual ao parametro para determinar se algum é o `node` solução.
+* OPEN-LIST:
+    * Para manter um registo dos `node` que ainda não foram expandidos. Se esta lista for vaiza o algoritmo termina pois não existem mais `node` para expandir.
+* max-depth:
+    * Utilizado para limitar a profundidade durante a pesquisa.
+* CLOSED-LIST:
+    * Um campo opcional que é defenido posteriormente no algoritmo para guardar os `node` que já foram expandidos por forma a evitar gerar novos `node` com o mesmo estado, ou seja `board`.
+* number-of-generated-nodes:
+    * Opcional e que deverá ser 0 no início para manter um registo do número de nós gerados para o cálculo da ramificação e penetrância.
+* number-of-expanded-nodes
+    * Opcional e que deverá ser 0 no início para manter um registo do número de nós que foram expandidos para o cálculo da ramificação.
+
+<!--Abaixo encontra-se a implementação completa da função:-->
+
+A função é recursiva em que as suas condições de paragem são:
+* Se a lista OPEN-LIST é NIL, pois não há mais nós para expandir
+* Se um dos nós sucessores tem um número de caixas fechadas às recebidas por parametro.
+
+Como retorno a funções retorna uma lista com o formato:
+```lisp
+'(([Nó solução]) [Qtn nós gerados] [Qtn nós expandidos] [Fator ramificação] [Penetrância])
+```
+em que:
+* `[Nó solução]` é o nó objetivo (o que tem o número de caixas fechadas). Se não encontrar a solução este campo será NIL.
+* `[Qtn nós gerados]` com a quantidade de nós gerados ao todo pelo algoritmo.
+* `[Qtn nós expandidos] ` com a quantidade de nós que foram expandidos.
+* `[Fator ramificação]` com o valor do fator de ramificação do algoritmo.
+* `[Penetrância]` com o valor da penetrância do algoritmo. Se não encontrar a solução este campo será NIL.
 
 ### A*
 
-...
+O algoritmo A* é implementado no ficheiro `informed-search.lisp` e é chamado através da função:
+```lisp
+(defun a-star-init (start-board closed-boxes-objective fn-heuristic &rest rest)
+    ...
+)
+```
+Esta função recebe como parametros `board` que será o estado inicial e o número de caixas que têm de estar fechadas como estado final, a heurística de avaliação e os parametros para a heurística escolhida.
+
+As heurísticas possíveis estão no ficheiro `node.lisp` e são:
+```lisp
+
+(defun heuristic-eval-by-remaining-to-close (board objective-close-squares)
+    ...
+)
+
+(defun heuristic-eval-by-remaining-arcs (board)
+    ...
+)
+```
+
+Para passar a heurística de avaliação pretendida apenas é necessário passar a partir do segundo parametro se existir, ao seja para o caso da função de avaliação heurística `heuristic-eval-by-remaining-to-close` poderiamos chamar a função como:
+```lisp
+(a-star-init start-board closed-boxes-objective 'heuristic-eval-by-remaining-to-close 5)
+```
+que assim passaria-se a função heuristica o parametro que requer o qual é enviado através do &rest da função.
+Já para a `heuristic-eval-by-remaining-arcs` podemos fazer igual mas passando-a sem indicar paramêtros pois a mesma não os recebe.
+```lisp
+(a-star-init start-board closed-boxes-objective 'heuristic-eval-by-remaining-arcs)
+```
+
+Depois esta função cria o `node` que vai ser colocado na lista de abertos assim iniciando o ciclo do A* com a função seguinte:
+```lisp
+(defun a-star (fn-heuristic closed-boxes-objective OPEN-LIST &optional
+    CLOSED-LIST
+    (number-of-generated-nodes 0)
+    (number-of-expanded-nodes 0)
+    &rest rest)
+    ...
+)
+```
+Esta função tem como parametros:
+* fn-heuristic:
+    * Simbolo da função heurística a utilizar. É possível usar uma das heurísticas presentes no ficheiro `node.lisp`.
+* closed-boxes-objective:
+    * Utilizado para verificar se os `node` gerados têm uma quantidade de caixas fechadas maior ou igual ao parametro para determinar se algum é o `node` solução.
+* OPEN-LIST:
+    * Para manter um registo dos `node` que ainda não foram expandidos. Se esta lista for vaiza o algoritmo termina pois não existem mais `node` para expandir. Os nós são substituíveis no caso de um sucessor com o mesmo estado ter melhor avaliação heurística.
+* CLOSED-LIST:
+    * Um campo opcional que é defenido posteriormente no algoritmo para guardar os `node` que já foram expandidos por forma a evitar gerar novos `node` com o mesmo estado, ou seja `board`. Os nós podem ser removidos no caso de um sucessor com o mesmo estado ter melhor avaliação heurística.
+* number-of-generated-nodes:
+    * Opcional e que deverá ser 0 no início para manter um registo do número de nós gerados para o cálculo da ramificação e penetrância.
+* number-of-expanded-nodes
+    * Opcional e que deverá ser 0 no início para manter um registo do número de nós que foram expandidos para o cálculo da ramificação.
+* rest:
+    * Parametros a serem passados para a função de avaliação heurística.
+
+<!--Abaixo encontra-se a implementação completa da função:-->
+
+A função é recursiva em que as suas condições de paragem são:
+* Se a lista OPEN-LIST é NIL, pois não há mais nós para expandir
+* Se um dos nós sucessores tem um número de caixas fechadas às recebidas por parametro.
+
+Como retorno a funções retorna uma lista com o formato:
+```lisp
+'(([Nó solução]) [Qtn nós gerados] [Qtn nós expandidos] [Fator ramificação] [Penetrância])
+```
+em que:
+* `[Nó solução]` é o nó objetivo (o que tem o número de caixas fechadas). Se não encontrar a solução este campo será NIL.
+* `[Qtn nós gerados]` com a quantidade de nós gerados ao todo pelo algoritmo.
+* `[Qtn nós expandidos] ` com a quantidade de nós que foram expandidos.
+* `[Fator ramificação]` com o valor do fator de ramificação do algoritmo.
+* `[Penetrância]` com o valor da penetrância do algoritmo. Se não encontrar a solução este campo será NIL.
+
+## Melhorias
+* Há a necessidade de fazer refactoring no código pois existem funções que fazem a mesma coisa ou muito semelhante duplicadas nos packages dos diferentes tipos de procura.
+* Criar mais funções para reduzir a quantidade de código dentro das funções dos algoritmos de procura, como por exemplo poderia se criar uma função para calcular a penetrância e outra para o fator de ramificação geral a todos.
+* Melhor a modularidade de passar uma função de avaliação heurística para a função do A* de forma a não ser necessáro tela no package `node.lisp`.
+* Implementar a heurística h(x) = td(x) - dc(x) em que o td(x) (total dots) seria o total de pontos do tabuleiro e dc(x) (double connected) a quantidade de pontos em que nesse ponto coêncide 2 ou mais linhas (2 ou mais conecxões). 
 
 ## Limitações
 
-...
+* Modularidade da função heurística fraca e confusa.
 
-## Requesitos Não Implementados
+## Requisitos Não Implementados
 
 * Algoritmo SMA*
 * Algoritmo IDA*
