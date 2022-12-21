@@ -37,7 +37,13 @@ Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penet
     (cond
         (
             (null OPEN-LIST)
-            (list NIL number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
+            ;(list NIL number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes (+ number-of-expanded-nodes 1)) (/ number-of-expanded-nodes number-of-generated-nodes))
+            (list NIL
+                number-of-generated-nodes
+                number-of-expanded-nodes
+                (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                NIL
+            )
         )
         (T
             (let
@@ -62,7 +68,7 @@ Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penet
                                     ordered-list
                                     (append (list (car OPEN-LIST)) (funcall 'remove-from-closed-list ordered-list CLOSED-LIST))
                                     (+ number-of-generated-nodes (list-length successors))
-                                    (list-length CLOSED-LIST)
+                                    (+ number-of-expanded-nodes 1)
                                     rest
                                 )
                             )
@@ -77,7 +83,13 @@ Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penet
                             ;(funcall 'add-to-open-list-a-star (cdr OPEN-LIST) successors)
                         )
                         (T
-                            (list objective-node (+ number-of-generated-nodes (list-length successors)) number-of-expanded-nodes (/ (+ number-of-generated-nodes (list-length successors)) (+ number-of-expanded-nodes 1)) (/ (+ number-of-expanded-nodes 1) (+ number-of-generated-nodes (list-length successors))))
+                            ;(list objective-node (+ number-of-generated-nodes (list-length successors)) number-of-expanded-nodes (/ (+ number-of-generated-nodes (list-length successors)) (+ number-of-expanded-nodes 1)) (/ (+ number-of-expanded-nodes 1) (+ number-of-generated-nodes (list-length successors))))
+                            (list objective-node
+                                (+ number-of-generated-nodes (list-length successors))
+                                number-of-expanded-nodes
+                                (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                                (/ (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)))
+                            )
                         )
                     )
                 )

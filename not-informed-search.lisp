@@ -20,14 +20,19 @@
 (in-package :not-informed-search)
 
 (defun dfs-init (start-board closed-boxes-objective max-depth)
-    (funcall 'dfs closed-boxes-objective max-depth (list (funcall 'new-successor start-board 0 NIL)) NIL 0)
+    (funcall 'dfs closed-boxes-objective max-depth (list (funcall 'new-successor start-board 0 NIL)) NIL 0 0)
 )
 
-(defun dfs (closed-boxes-objective max-depth OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
+(defun dfs (closed-boxes-objective max-depth OPEN-LIST &optional CLOSED-LIST (number-of-generated-nodes 0) (number-of-expanded-nodes 0))
     (cond
         (
             (null OPEN-LIST)
-            (list NIL number-of-generated-nodes)
+            (list NIL
+                number-of-generated-nodes
+                number-of-expanded-nodes
+                (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                NIL
+            )
         )
         (T
             (let
@@ -46,6 +51,7 @@
                             )
                             (append (list (car OPEN-LIST)) CLOSED-LIST)
                             number-of-generated-nodes
+                            number-of-expanded-nodes
                         )
                     )
                     (T
@@ -65,10 +71,17 @@
                                         )
                                         (append (list (car OPEN-LIST)) CLOSED-LIST)
                                         (+ number-of-generated-nodes (list-length successors))
+                                        (+ number-of-expanded-nodes 1)
                                     )
                                 )
                                 (T
-                                    (list objective-node (+ number-of-generated-nodes (list-length successors)))
+                                    ;(format T "ND: ~d ~% GN: ~d~% EN: ~d~%" (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)) (+ number-of-expanded-nodes 1))
+                                    (list objective-node
+                                        (+ number-of-generated-nodes (list-length successors))
+                                        number-of-expanded-nodes
+                                        (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                                        (/ (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)))
+                                    )
                                 )
                             )
                         )
@@ -80,14 +93,20 @@
 )
 
 (defun bfs-init (start-board closed-boxes-objective)
-    (funcall 'bfs closed-boxes-objective (list (funcall 'new-successor start-board 0 NIL)) NIL 0)
+    (funcall 'bfs closed-boxes-objective (list (funcall 'new-successor start-board 0 NIL)) NIL 0 0)
 )
 
-(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
+(defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST (number-of-generated-nodes 0) (number-of-expanded-nodes 0))
     (cond
         (
             (null OPEN-LIST)
-            (list NIL number-of-generated-nodes)
+            ;(list NIL number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
+            (list NIL
+                number-of-generated-nodes
+                number-of-expanded-nodes
+                (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                NIL
+            )
         )
         (T
             (let 
@@ -109,10 +128,17 @@
                                 )
                                 (append (list (car OPEN-LIST)) CLOSED-LIST)
                                 (+ number-of-generated-nodes (list-length successors))
+                                (+ number-of-expanded-nodes 1)
                             )
                         )
                         (T
-                            (list objective-node (+ number-of-generated-nodes (list-length successors)))
+                            ;(list objective-node (+ number-of-generated-nodes (list-length successors)) number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
+                            (list objective-node
+                                (+ number-of-generated-nodes (list-length successors))
+                                number-of-expanded-nodes
+                                (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                                (/ (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)))
+                            )
                         )
                     )
                 )
