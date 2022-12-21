@@ -1,4 +1,20 @@
-# Dots And Boxes 1ª Fase
+# **Projeto Nº 1:** Época Normal
+
+<hr/>
+
+![capa](./pics/capa.png)
+
+<hr/>
+
+**Unidade Curricular: Inteligência Artificial**
+* **Professor**:
+    * Eng. Filipe Mariano
+
+* **Alunos**:
+    * João Portas - 202002475
+    * Lucas Freixieiro - 202002193
+
+# Sumário
 Este projeto passa pela implementação de algoritmos de pesquisa para a procurar de uma determinada solução para um problema neste jogo. Foi considerado que o jogo seria jogado apenas por um único jogador com o intuito de encontrar o melhor caminho para fechar X caixas dado um problema inicial e uma quantidade de caixas fechadas finais.
 Para isto foram implementados os algoritmo BFS, DFS e A*.
 
@@ -127,7 +143,7 @@ Desta forma teremos uma lista estruturada para `board` que representa um tabulei
 A função `draw-horizontal-arc` recebe um `board`, uma linha e uma coluna e traça uma linhha horizontal para a direita a partir desse ponto. Retorna uma `board` que seria a recebida com mais essa linha no caso de ainda não existir uma linha já desenhada onde se indicou. Se não retorna NIL.
 
 Exemplo de uma `board` vazia de 2x2 para `(draw-horizontal-arc board 2 2)`:
-![draw-horizontal-arc board 2 2](/pics/draw-horizontal-arc-2-2.png)
+![draw-horizontal-arc board 2 2](./pics/draw-horizontal-arc-2-2.png)
 
 ```lisp
 (defun draw-vertical-arc (board col row &optional (x 1))
@@ -137,7 +153,7 @@ Exemplo de uma `board` vazia de 2x2 para `(draw-horizontal-arc board 2 2)`:
 A função `draw-vertical-arc` recebe um `board`, uma coluna e uma linha e traça uma linhha vertical para baixo a partir desse ponto. Retorna uma `board` que seria a recebida com mais essa linha no caso de ainda não existir uma linha já desenhada onde se indicou. Senão retorna NIL.
 
 Exemplo de uma `board` vazia de 2x2 para `(draw-horizontal-arc board 1 2)`:
-![draw-horizontal-arc board 2 2](/pics/draw-vertical-arc-1-2.png)
+![draw-horizontal-arc board 2 2](./pics/draw-vertical-arc-1-2.png)
 
 ```lisp
 (defun get-number-of-closed-boxes (board)
