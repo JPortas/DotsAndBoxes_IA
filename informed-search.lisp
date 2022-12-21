@@ -87,7 +87,7 @@ Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penet
                             (list objective-node
                                 (+ number-of-generated-nodes (list-length successors))
                                 number-of-expanded-nodes
-                                (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
+                                (/ (+ number-of-generated-nodes (list-length successors)) (+ number-of-expanded-nodes 1))
                                 (/ (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)))
                             )
                         )
