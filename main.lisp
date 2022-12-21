@@ -23,6 +23,8 @@
     )
     (:export
         #:main
+        #:load-problems
+        #:read-lists-from-string
         #:exit
     )
 )
@@ -34,6 +36,47 @@
 ;to start your jorney or
 ;sbcl --load .\main.lisp --eval '(in-package #:main)'
 ;to teste by your own
+
+(defun create-list-from-file (filename)
+    (cond
+        (
+            (not (stringp filename))
+            nil
+        )
+        (t  
+            (with-open-file (stream filename)
+                (let ((line (read-line stream)))
+                    (with-input-from-string (s (string line))
+                        (loop
+                            for line = (read s nil)
+                            while line
+                            collect (cond
+                                (
+                                    (eql line '/)
+                                    (progn nil)
+                                )
+                                (t line)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+(defun load-problems (filename)
+    (cond
+        (
+            (not (stringp filename))
+            nil
+        )
+        (T
+            (apply #'append (create-list-from-file filename))
+        )
+    )
+)
+
 (defun main ()
     (format T "Welcome to IA 0.1 :)")
 )
