@@ -77,7 +77,7 @@ Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penet
                             ;(funcall 'add-to-open-list-a-star (cdr OPEN-LIST) successors)
                         )
                         (T
-                            (list objective-node number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
+                            (list objective-node (+ number-of-generated-nodes (list-length successors)) number-of-expanded-nodes (/ (+ number-of-generated-nodes (list-length successors)) (+ number-of-expanded-nodes 1)) (/ (+ number-of-expanded-nodes 1) (+ number-of-generated-nodes (list-length successors))))
                         )
                     )
                 )

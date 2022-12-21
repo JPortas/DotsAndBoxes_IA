@@ -68,7 +68,7 @@
                                     )
                                 )
                                 (T
-                                    (list objective-node number-of-generated-nodes)
+                                    (list objective-node (+ number-of-generated-nodes (list-length successors)))
                                 )
                             )
                         )
@@ -112,7 +112,7 @@
                             )
                         )
                         (T
-                            (list objective-node number-of-generated-nodes)
+                            (list objective-node (+ number-of-generated-nodes (list-length successors)))
                         )
                     )
                 )
