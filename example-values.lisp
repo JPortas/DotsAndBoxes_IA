@@ -24,6 +24,8 @@
         #:ex-board-2x2
         #:generated-successors
         #:existing-closed
+        #:existing-closed-heuristic
+        #:generated-successors-heuristic
     )
 )
 
@@ -184,7 +186,7 @@ Pode incluir heuristica ou não por parametro."
             (new-successor (ex-board) 0 NIL)
         )
         (T
-            (new-successor (ex-board) 0 NIL 10)
+            (new-successor (ex-board) 0 NIL heuristic)
         )
     )
 )
@@ -244,5 +246,63 @@ Pode incluir heuristica ou não por parametro."
 		        ((0 1) (0 0) (0 0))
             )
         0 NIL))
+    )
+)
+
+(defun generated-successors-heuristic ()
+    (list
+        (new-successor 
+            '(
+                ((0 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL 10)
+        (new-successor 
+            '(
+                ((1 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL 2)
+        (new-successor 
+            '(
+                ((0 1) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL 4)
+        (new-successor 
+            '(
+                ((0 0) (1 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL 1)
+    )
+)
+
+(defun existing-closed-heuristic ()
+    (list
+        (new-successor 
+            '(
+                ((0 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL 8)
+        (new-successor 
+            '(
+                ((0 0) (0 0) (0 0))
+		        ((1 0) (1 0) (0 0))
+            )
+        0 NIL 2)
+        (new-successor 
+            '(
+                ((1 0) (0 0) (0 0))
+		        ((0 0) (0 0) (0 0))
+            )
+        0 NIL 1)
+        (new-successor 
+            '(
+                ((0 0) (1 0) (0 0))
+		        ((0 1) (0 0) (0 0))
+            )
+        0 NIL 8)
     )
 )

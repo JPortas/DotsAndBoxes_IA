@@ -54,7 +54,7 @@ Opcionalmente recebe o valor da heurística que gera um nó que é uma lista com
             (list board depth NIL)
         )
         (T
-            (list board depth heuristic parent)
+            (list board depth heuristic NIL)
         )
     )
 )
@@ -128,6 +128,7 @@ Se for Null retorna NIL. Se a heuristica não existir retorna NIL."
             (append (funcall 'sucessors-to-horizontal node) (funcall 'sucessors-to-vertical node))
         )
         (T
+            (format t "using heuristic: ~d ~%" rest)
             ;(apply 'eval-heuristic fn-heuristic rest)
             (append
                 (apply 'sucessors-to-horizontal-with-heuristic
