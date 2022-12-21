@@ -16,18 +16,28 @@
 
 (in-package :informed-search)
 
+;(time (a-star-init (ex-node 7) 8 'heuristic-eval-by-remaining-arcs))
 (defun a-star-init (start-node closed-boxes-objective fn-heuristic &rest rest)
 "Recebe o no de inicio, quantidade de caixas fechadas no objetivo e a função heuristica.
 A fn-heuristic seria '[heuristiva] [parameters] que recebe o simbolo da função euristica e os parametros.
-Têm que estar defenidos no package node por enquanto."
-    (apply 'a-star fn-heuristic closed-boxes-objective (list start-node) NIL rest)
+Têm que estar defenidos no package node por enquanto.
+Reuturn ([solução] [nos gerados] [nos expandidos] [fator ramificação] [penetrancia])"
+    #|(let 
+        (
+            (time-info
+                (time (apply 'a-star fn-heuristic closed-boxes-objective (list start-node) NIL 0 rest))
+            )
+        )
+        (first time-info)
+    )|#
+    (apply 'a-star fn-heuristic closed-boxes-objective (list start-node) NIL 0 0 rest)
 )
 
-(defun a-star (fn-heuristic closed-boxes-objective OPEN-LIST &optional CLOSED-LIST &rest rest)
+(defun a-star (fn-heuristic closed-boxes-objective OPEN-LIST &optional CLOSED-LIST (number-of-generated-nodes 0) (number-of-expanded-nodes 0) &rest rest)
     (cond
         (
             (null OPEN-LIST)
-            NIL
+            (list NIL number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
         )
         (T
             (let
@@ -51,6 +61,8 @@ Têm que estar defenidos no package node por enquanto."
                                     closed-boxes-objective
                                     ordered-list
                                     (append (list (car OPEN-LIST)) (funcall 'remove-from-closed-list ordered-list CLOSED-LIST))
+                                    (+ number-of-generated-nodes (list-length successors))
+                                    (list-length CLOSED-LIST)
                                     rest
                                 )
                             )
@@ -65,7 +77,7 @@ Têm que estar defenidos no package node por enquanto."
                             ;(funcall 'add-to-open-list-a-star (cdr OPEN-LIST) successors)
                         )
                         (T
-                            objective-node
+                            (list objective-node number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
                         )
                     )
                 )
