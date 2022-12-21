@@ -79,8 +79,8 @@
     )
 )
 
-(defun bfs-init (start-node closed-boxes-objective)
-    (funcall 'bfs closed-boxes-objective (list start-node) NIL 0)
+(defun bfs-init (start-board closed-boxes-objective)
+    (funcall 'bfs closed-boxes-objective (list (funcall 'new-successor start-board 0 NIL)) NIL 0)
 )
 
 (defun bfs (closed-boxes-objective OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
