@@ -29,7 +29,7 @@
             (null OPEN-LIST)
             (list NIL
                 number-of-generated-nodes
-                number-of-expanded-nodes
+                (+ number-of-expanded-nodes 1)
                 (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
                 NIL
             )
@@ -78,7 +78,7 @@
                                     ;(format T "ND: ~d ~% GN: ~d~% EN: ~d~%" (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)) (+ number-of-expanded-nodes 1))
                                     (list objective-node
                                         (+ number-of-generated-nodes (list-length successors))
-                                        number-of-expanded-nodes
+                                        (+ number-of-expanded-nodes 1)
                                         (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
                                         (/ (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)))
                                     )
@@ -103,7 +103,7 @@
             ;(list NIL number-of-generated-nodes number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
             (list NIL
                 number-of-generated-nodes
-                number-of-expanded-nodes
+                (+ number-of-expanded-nodes 1)
                 (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
                 NIL
             )
@@ -135,7 +135,7 @@
                             ;(list objective-node (+ number-of-generated-nodes (list-length successors)) number-of-expanded-nodes (/ number-of-generated-nodes number-of-expanded-nodes) (/ number-of-expanded-nodes number-of-generated-nodes))
                             (list objective-node
                                 (+ number-of-generated-nodes (list-length successors))
-                                number-of-expanded-nodes
+                                (+ number-of-expanded-nodes 1)
                                 (/ number-of-generated-nodes (+ number-of-expanded-nodes 1))
                                 (/ (funcall 'get-node-depth objective-node) (+ number-of-generated-nodes (list-length successors)))
                             )
