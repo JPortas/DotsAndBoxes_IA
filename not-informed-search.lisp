@@ -19,8 +19,8 @@
 
 (in-package :not-informed-search)
 
-(defun dfs-init (start-node closed-boxes-objective max-depth)
-    (funcall 'dfs closed-boxes-objective max-depth (list start-node) NIL 0)
+(defun dfs-init (start-board closed-boxes-objective max-depth)
+    (funcall 'dfs closed-boxes-objective max-depth (list (funcall 'new-successor start-board 0 NIL)) NIL 0)
 )
 
 (defun dfs (closed-boxes-objective max-depth OPEN-LIST &optional CLOSED-LIST number-of-generated-nodes)
