@@ -179,6 +179,10 @@
     )
 )
 
+(defun write-to-file-and-console (text stream)
+    (format stream text)
+    (format t text)
+)
 
 (defun main (filename)
 "Inicio do programa"
@@ -191,39 +195,85 @@
                 (profundidade (cond ((eql algoritmo 'dfs-init) (ler-profundidade)) (T 5)))
                 (heuristica (cond ((eql algoritmo 'a-star-init) (ler-heuristica)) (T 'heuristic-eval-by-remaining-to-close)))
             )
-            (cond
-                (
-                    (equal algoritmo 'bfs-init)
-                    (progn
-                        (format t "Board: ~d~%Objetivo:~d~%Algoritmo: BFS~%" (car problem) (cadr problem))
-                        (funcall algoritmo (car problem) (cadr problem))
-                    )
-                )
-                (
-                    (equal algoritmo 'dfs-init)
-                    (progn
-                        (format t "Board: ~d~%Objetivo:~d~%Algoritmo: DFS~%Profundidade: ~d~%" (car problem) (cadr problem) profundidade)
-                        (funcall algoritmo (car problem) (cadr problem) profundidade)
-                    )
-                    
-                )
-                (
-                    (equal algoritmo 'a-star-init)
-                    (progn
-                        (format t "Board: ~d~%Objetivo:~d~%Algoritmo: A*~%" (car problem) (cadr problem))
-                        (cond
-                            (
-                                (equal heuristica 'heuristic-eval-by-remaining-arcs)
-                                (format t "Heuristica: h(x) = nº de zeros na board")
-                                (funcall algoritmo (car problem) (cadr problem) heuristica)
-                            )
-                            (t
-                                (format t "Heuristica: h(x) = o(x) - c(x)")
-                                (funcall algoritmo (car problem) (cadr problem) heuristica (cadr problem))
+            (with-open-file (stream "desempenho.dat" :direction :output :if-does-not-exist :create :if-exists :append)
+                (cond
+                    (
+                        (equal algoritmo 'bfs-init)
+                        (progn
+                            (write-to-file-and-console (format nil "Board: ~d~%Objetivo:~d~%Algoritmo: BFS~%" (car problem) (cadr problem)) stream)
+                            (time
+                                (let
+                                    (
+                                        (search-result (funcall algoritmo (car problem) (cadr problem)))
+                                    )
+                                    (write-to-file-and-console (format nil "Resultado da procura: ~d~%" (car search-result)) stream)
+                                    (write-to-file-and-console (format nil "Total de nós gerados: ~d~%" (nth 1 search-result)) stream)
+                                    (write-to-file-and-console (format nil "Total de nós expandidos: ~d~%" (nth 2 search-result)) stream)
+                                    (write-to-file-and-console (format nil "Ramificação: ~d~%" (nth 3 search-result)) stream)
+                                    (write-to-file-and-console (format nil "Tabuleiro solução: ~d~%" (caar search-result)) stream)
+                                ) 
                             )
                         )
                     )
-                    
+                    (
+                        (equal algoritmo 'dfs-init)
+                        (progn
+                            (write-to-file-and-console (format nil "Board: ~d~%Objetivo:~d~%Algoritmo: DFS~%Profundidade: ~d~%" (car problem) (cadr problem) profundidade) stream)
+                            (time
+                                (let
+                                    (
+                                        (search-result (funcall algoritmo (car problem) (cadr problem) profundidade))
+                                    )
+                                    (write-to-file-and-console (format nil "Resultado da procura: ~d~%" (car search-result)) stream)
+                                    (write-to-file-and-console (format nil "Total de nós gerados: ~d~%" (nth 1 search-result)) stream)
+                                    (write-to-file-and-console (format nil "Total de nós expandidos: ~d~%" (nth 2 search-result)) stream)
+                                    (write-to-file-and-console (format nil "Ramificação: ~d~%" (nth 3 search-result)) stream)
+                                    (write-to-file-and-console (format nil "Tabuleiro solução: ~d~%" (caar search-result)) stream)
+                                )
+                            )
+                        )
+                    )
+                    (
+                        (equal algoritmo 'a-star-init)
+                        (progn
+                            (write-to-file-and-console (format nil "Board: ~d~%Objetivo:~d~%Algoritmo: A*~%" (car problem) (cadr problem)) stream)
+                            (cond
+                                (
+                                    (equal heuristica 'heuristic-eval-by-remaining-arcs)
+                                    (write-to-file-and-console (format nil "Heuristica: h(x) = nº de zeros na board~%") stream)
+                                    (time
+                                        (let
+                                            (
+                                                (search-result (funcall algoritmo (car problem) (cadr problem) heuristica))
+                                            )
+                                            (write-to-file-and-console (format nil "Resultado da procura: ~d~%" (car search-result)) stream)
+                                            (write-to-file-and-console (format nil "Total de nós gerados: ~d~%" (nth 1 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Total de Nós expandidos: ~d~%" (nth 2 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Fator de Ramificação Médio: ~d~%" (nth 3 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Penetrância: ~d~%" (nth 4 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Tabuleiro solução: ~d~%" (caar search-result)) stream)
+                                        )
+                                    )  
+                                )
+                                (t
+                                    (write-to-file-and-console (format nil "Heuristica: h(x) = o(x) - c(x)~%") stream)
+                                    (time
+                                        (let
+                                            (
+                                                (search-result (funcall algoritmo (car problem) (cadr problem) heuristica (cadr problem)))
+                                            )
+                                            (write-to-file-and-console (format nil "Resultado da procura: ~d~%" (car search-result)) stream)
+                                            (write-to-file-and-console (format nil "Total de nós gerados: ~d~%" (nth 1 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Total de Nós expandidos: ~d~%" (nth 2 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Fator de Ramificação Médio: ~d~%" (nth 3 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Penetrância: ~d~%" (nth 4 search-result)) stream)
+                                            (write-to-file-and-console (format nil "Tabuleiro solução: ~d~%" (caar search-result)) stream)
+                                        )
+                                    )
+                                ) 
+                            )
+                        )
+                    )    
                 )
             )
         )
