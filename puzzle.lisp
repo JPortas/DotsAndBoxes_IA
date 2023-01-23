@@ -1,19 +1,32 @@
-;;;; puzzle.lisp
-;;;; Lógica do dominio
-;;;; Autor: Lucas Freixieiro e João Portas
-
-
-;;; Tabuleiro
-(defun tabuleiro-teste ()
-  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
-	'(
-		((0 0 0) (0 0 1) (0 1 1) (0 0 1))
-		((0 0 0) (0 1 1) (1 0 1) (0 1 1))
-	)
+(defpackage :puzzle
+    (:use
+        #:COMMON-LISP
+    )
 )
 
-;;; Exercicios
-(defun get-arcos-horizontais (board) 
+(in-package :puzzle)
+
+(defun new-node (state depth &optional (parent-node NIL))
+    (list state depth parent-node)
+)
+
+(defun get-horizontal-arcs (board)
+"Recebe um tabuleiro e retorna uma lista com sublistas em que cada representa um 'linha' horizontal do tabuleiro.
+Parameters >>
+    board (list): Representa um tabuleiro de jogo.
+        exemplo:
+        (
+            ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
+            ((0 0 0) (0 1 1) (1 0 1) (0 1 1))
+        )
+Return <<
+    (list): Um lista com as infromações dos arcos horizontais.
+        exemplo:
+        ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
+    OR
+    NIL: Se os parametros recebidos forem NULL.
+    
+"
 	(cond
 		(
 			(null board)
@@ -25,7 +38,23 @@
 	)
 )
 
-(defun get-arcos-verticais (board)
+(defun get-vertical-arcs (board)
+"Recebe um tabuleiro e retorna uma lista com sublistas em que cada representa um 'linha' vertical do tabuleiro.
+Parameters >>
+    board (list): Representa um tabuleiro de jogo.
+        exemplo:
+        (
+            ((0 0 0) (0 0 1) (0 1 1) (0 0 1))
+            ((0 0 0) (0 1 1) (1 0 1) (0 1 1))
+        )
+Return <<
+    (list): Um lista com as infromações dos arcos verticais.
+        exemplo:
+        ((0 0 0) (0 1 1) (1 0 1) (0 1 1))
+    OR
+    NIL: Se os parametros recebidos forem NULL.
+    
+"
 	(cond
 		(
 			(null board)
@@ -37,82 +66,186 @@
 	)
 )
 
-(defun get-arco-na-posicao (numero-da-lista posicao-na-lista listas)
+(defun get-arc-in-position (orientation-list row col)
+"Obtem o estado de se de um ponto ao outro recebido numa determinada orientação estão ligados. Se for 1 tem uma linha a fechar os 2 pontos
+caso contrário não tem uma linha a fechar esses 2 pontos
+Parameters >>
+    row (number): O número que corresponte à posição de um sub-lista numa lista de ligações horizontais ou verticais.
+    col (number): O número que corresponde à posição de uma ligação entre dois pontos relativamente á lista de ligações (horizontai ou verticais) recebida e ao número do row escolhido.
+    orientation-list (list): Lista relativamente à ligações horizontais ou vertiacas da qual vai ser extraida a informação.
+Return:
+    1: Se está uma linha a ligar 2 pontos
+    0: Se não estão ligados um ao outro
+"
 	(cond
 		(
-			(or (null listas) (< numero-da-lista 1) (< posicao-na-lista 1))
+			(or (null orientation-list) (< row 1) (< col 1))
 			nil
 		)
 		(T
-			(nth (- posicao-na-lista 1) (nth (- numero-da-lista 1) listas))
+			(nth (- col 1) (nth (- row 1) orientation-list))
 		)
 	)
 )
 
-(defun substituir (indice lista &optional (x 1))
+(defun get-connections-row-in-orientation-list (orientation-list row)
+"Recebe uma lista ligações ver verticais ou horizontais e obtem uma linha da lista.
+Parameters >>
+    orientation-list (list): Um lista com as ligações verticais ou horizontais.
+    row (number): O número da linhas das ligações a retornar.
+Return <<
+    (x y z) -> Em que cada letra corresponde naquela tinha à ligação entre os pontos.
+"
+    (cond
+        (
+            (null orientation-list)
+            NIL
+        )
+        (T
+            (nth (- row 1) orientation-list)
+        )
+    )
+)
+
+(defun replace-arc-connection (arcs-state-part-list index &optional (x 1))
+"Recebe a posição da lista de conecxões de um corredor horizontal ou vertical e o corredor e substitui por um valor.
+Parameters >>
+    position (number): Posição numa lista com os estados das linhas num corredor ex: (1 0 1)
+    arcs-state-part-list (list): Corredor de uma lista de horizontais ou verticais. ex: (1 0 1)
+    [optional]
+    x (number): Valor pelo qual vai ser substituido na lista recebida e na posição indicada.
+Return <<
+    (A B C) (list): Com o valor na posição indicada supstituido.
+"
 	(cond
 		(
-			(or (null lista) (< indice 1))
+			(or (null arcs-state-part-list) (< index 1))
 			nil
 		)
 		(
-			(= indice 1)
-			(cons x (cdr lista))
+			(= index 1)
+			(cons x (cdr arcs-state-part-list))
 		)
 		(T
-			(cons (car lista) (substituir (- indice 1) (cdr lista) x))
+			(cons (car arcs-state-part-list) (replace-arc-connection (cdr arcs-state-part-list) (- index 1) x))
 		)
 	)
 )
 
-(defun arco-na-posicao (numero-da-lista posicao-na-lista lista &optional (x 1))
+(defun replace-arc-connection-in-position (orientation-list row col  &optional (x 1))
+"Recebe a posição da lista de conecxões horizontal ou vertical, o corredor dentro da lista das conexções (horizontai ou verticias) e a posição em que se vai mudar o valor.
+Parameters >>
+    position (number): Posição numa lista com os estados das linhas num corredor ex: (1 0 1)
+    orientation-list-row (list): Corredor de uma lista de horizontais ou verticais. ex: (1 0 1)
+    [optional]
+    x (number): Valor pelo qual vai ser substituido na lista recebida e na posição indicada.
+Return <<
+    (A B C) (list): Com o valor na posição indicada supstituido.
+"
 	(cond
 		(
-			(or (null lista) (< numero-da-lista 1) (< posicao-na-lista 1) (null (get-arco-na-posicao numero-da-lista posicao-na-lista lista)))
+			(or (null orientation-list) (< row 1) (< col 1) (null (get-arc-in-position orientation-list row col)))
 			nil
 		)
 		(
-			(= numero-da-lista 1)
-			(cons (substituir posicao-na-lista (car lista) x) (cdr lista))
+			(= row 1)
+			(cons (replace-arc-connection (car orientation-list) col x) (cdr orientation-list))
 		)
 		(T
-			(cons (car lista) (arco-na-posicao (- numero-da-lista 1) posicao-na-lista (cdr lista) x))
+			(cons (car orientation-list) (replace-arc-connection-in-position (cdr orientation-list) (- row 1) col x))
 		)
 	)
 )
 
-(defun arco-horizontal (numero-da-lista posicao-na-lista tabuleiro &optional (x 1))
+(defun draw-horizontal-arc (board row col &optional (x 1))
+"Altera a lista de horizontai para colocar uma linha horizontal na posição indicada.
+Parameters >>
+    board (list): Tabuleiro de jogo
+    row (number): Numero da linha dos horizontais em que vai ser feita a alteração
+    position (number): Numero do ponto que vai ligao ao seu vizinho á direita.
+Return <<
+    (list): Tabuleiro de jogo com a alteração feita.
+"
 	(cond
 		(
-			(or (null tabuleiro) (< numero-da-lista 1) (< posicao-na-lista 1) 
-				(null (get-arco-na-posicao numero-da-lista posicao-na-lista (get-arcos-horizontais tabuleiro)))
-				(/= (get-arco-na-posicao numero-da-lista posicao-na-lista (get-arcos-horizontais tabuleiro)) 0)
+			(or (null board) (< row 1) (< col 1) 
+				(null (get-arc-in-position (get-horizontal-arcs board) row col))
+				(/= (get-arc-in-position (get-horizontal-arcs board) row col) 0)
 			)
 			nil
 		)
 		(T
 			(list
-				(arco-na-posicao numero-da-lista posicao-na-lista (get-arcos-horizontais tabuleiro) x)	  
-				(get-arcos-verticais tabuleiro)
+				(replace-arc-connection-in-position (get-horizontal-arcs board) row col x)	  
+				(get-vertical-arcs board)
 			)
 		)
 	)
 )
 
-(defun arco-vertical (posicao-na-lista numero-da-lista tabuleiro &optional (x 1))
+(defun draw-vertical-arc (board col row &optional (x 1))
 	(cond
 		(
-			(or (null tabuleiro) (< numero-da-lista 1) (< posicao-na-lista 1) 
-				(null (get-arco-na-posicao numero-da-lista posicao-na-lista (get-arcos-verticais tabuleiro)))
-				(/= (get-arco-na-posicao numero-da-lista posicao-na-lista (get-arcos-verticais tabuleiro)) 0)
+			(or (null board) (< row 1) (< col 1) 
+				(null (get-arc-in-position (get-vertical-arcs board) row col))
+				(/= (get-arc-in-position (get-vertical-arcs board) row col) 0)
 			)
 			nil
 		)
 		(T
 			(list
-				(get-arcos-horizontais tabuleiro)
-				(arco-na-posicao numero-da-lista posicao-na-lista (get-arcos-verticais tabuleiro) x)	  
+				(get-horizontal-arcs board)
+				(replace-arc-connection-in-position (get-vertical-arcs board) row col x)	  
 			)
+		)
+	)
+)
+
+(defun count-boxes (horizontal-arcs vertical-arcs &optional (row 1) (col 1))
+  "Count the total number of closed boxes in a dots and boxes game.
+   HORIZONTAL-ARCS is a list of lists representing the horizontal arcs, with 1 indicating
+   that an arc is drawn and 0 indicating that it is not.
+   VERTICAL-ARCS is a list of lists representing the vertical arcs, with 1 indicating
+   that an arc is drawn and 0 indicating that it is not.
+   ROW and COL are the current row and column being checked."
+   	(cond 
+		(
+			(= row (list-length horizontal-arcs))
+         	0
+		) ; Base case: We have reached the end of the matrix, so there are no more boxes to count
+        (
+			(and 
+				(= 1 (get-arc-in-position horizontal-arcs row col))
+              	(= 1 (get-arc-in-position vertical-arcs col row))
+				(= 1 (get-arc-in-position horizontal-arcs (1+ row) col))
+				(= 1 (get-arc-in-position vertical-arcs (1+ col) row))
+			)
+         	(+ 1 
+				(if 
+					(< col (list-length (car horizontal-arcs)))
+                  	(count-boxes horizontal-arcs vertical-arcs row (1+ col)) ; Move to the next column
+                  	(count-boxes horizontal-arcs vertical-arcs (1+ row) 1) ; Move to the first column of the next row
+				)
+			)
+		) 
+        (t
+         	(if 
+				(< col (list-length (car horizontal-arcs)))
+             	(count-boxes horizontal-arcs vertical-arcs row (1+ col)) ; Move to the next column
+             	(count-boxes horizontal-arcs vertical-arcs (1+ row) 1) ; Move to the first column of the next row
+			)
+		)
+	)
+) 
+
+(defun get-number-of-closed-boxes (board)
+	(cond
+		(
+			(null board)
+			nil
+		)
+		(t
+			(count-boxes (get-horizontal-arcs board) (get-vertical-arcs board))
 		)
 	)
 )
