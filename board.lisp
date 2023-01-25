@@ -1,12 +1,29 @@
-(defpackage :puzzle
+;;;; board.lisp
+;;;; Possuí funções para obter, modificar e operar estados de um tabuleiro de jogo.
+;;;; Autor: Lucas Freixieiro e João Portas
+
+(defpackage :board
     (:use
         #:COMMON-LISP
     )
+    (:export
+        #:new-board
+        #:get-horizontal-arcs
+        #:get-vertical-arcs
+        #:get-arc-in-position
+        #:get-connections-row-in-orientation-list
+        #:replace-arc-connection
+        #:replace-arc-connection-in-position
+        #:draw-horizontal-arc
+        #:draw-vertical-arc
+		#:count-boxes
+		#:get-number-of-closed-boxes
+    )
 )
 
-(in-package :puzzle)
+(in-package :board)
 
-(defun new-node (state depth &optional (parent-node NIL))
+(defun new-board (state depth &optional (parent-node NIL))
     (list state depth parent-node)
 )
 
@@ -26,6 +43,7 @@ Return <<
     OR
     NIL: Se os parametros recebidos forem NULL.
     
+
 "
 	(cond
 		(
@@ -54,6 +72,7 @@ Return <<
     OR
     NIL: Se os parametros recebidos forem NULL.
     
+
 "
 	(cond
 		(
