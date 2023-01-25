@@ -102,7 +102,18 @@ Return:
 			nil
 		)
 		(T
-			(nth (- col 1) (nth (- row 1) orientation-list))
+			(let
+				(
+					(value (nth (- col 1) (nth (- row 1) orientation-list)))
+				)
+				(cond
+					(
+						(> value 0)
+						1
+					)
+					(T 0)
+				)
+			)
 		)
 	)
 )

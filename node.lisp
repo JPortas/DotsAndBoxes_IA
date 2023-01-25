@@ -13,14 +13,16 @@
         #:sucessors-to-vertical
         #:get-successors
         #:count-zeros
+        #:get-p1-closed-boxes
+        #:get-p2-closed-boxes
     )
 )
 
 (in-package :node)
 
-(defun new-successor (board depth parent)
-"Cria um novo sucessor em que receber uma tabuleiro, a profundidade e o nó pai e gera um nó que é uma lista ((board) depth (parent))"
-    (list board depth parent)
+(defun new-successor (board depth p1 p2)
+"Cria um novo sucessor em que receber uma tabuleiro, a profundidade, quantas caixas tem o jogador um fechado e quantas o 2 tem fechadas"
+    (list board depth p1 p2)
 )
 
 (defun get-node-state (node)
@@ -65,42 +67,38 @@ Se for Null retorna NIL."
     )
 )
 
-(defun get-successors (node &optional fn-heuristic &rest rest)
-"Obtem e retorna todos os sucessores do no recebidos."
-;Heuristica em desenvolvimento
+(defun get-p1-closed-boxes (node)
+"Obtem a quantidade de caixas fechadas pelo player 1 do nó."
     (cond
         (
-            (null fn-heuristic)
-            (append (funcall 'sucessors-to-horizontal node) (funcall 'sucessors-to-vertical node))
+            (null node)
+            NIL
         )
         (T
-            ;(format t "using heuristic: ~d ~%" rest)
-            ;(apply 'eval-heuristic fn-heuristic rest)
-            (append
-                (apply 'sucessors-to-horizontal-with-heuristic
-                    node
-                    (list-length (get-horizontal-arcs (get-node-state node)))
-                    (list-length (get-vertical-arcs (get-node-state node)))
-                    1
-                    1
-                    fn-heuristic
-                    rest
-                )
-                (apply 'sucessors-to-vertical-with-heuristic
-                    node
-                    (list-length (get-horizontal-arcs (get-node-state node)))
-                    (list-length (get-vertical-arcs (get-node-state node)))
-                    1
-                    1
-                    fn-heuristic
-                    rest
-                )
-            )
+            (caddr node)
         )
-    ) 
+    )
 )
 
-(defun sucessors-to-horizontal (node &optional (horizontal-length (list-length (get-horizontal-arcs (get-node-state node)))) (vertical-length (list-length (get-vertical-arcs (get-node-state node)))) (current-horizontal-length 1) (current-vertical-length 1))
+(defun get-p2-closed-boxes (node)
+"Obtem a quantidade de caixas fechadas pelo player 2 do nó."
+    (cond
+        (
+            (null node)
+            NIL
+        )
+        (T
+            (cadddr node)
+        )
+    )
+)
+
+(defun get-successors (node)
+"Obtem e retorna todos os sucessores do no recebidos."
+    (append (funcall 'sucessors-to-horizontal node) (funcall 'sucessors-to-vertical node))
+)
+
+(defun sucessors-to-horizontal (node player &optional (horizontal-length (list-length (get-horizontal-arcs (get-node-state node)))) (vertical-length (list-length (get-vertical-arcs (get-node-state node)))) (current-horizontal-length 1) (current-vertical-length 1))
 "Gera os sucessores da colocação horizontal de uma jogada em qualquer nó que ainda não esteja preenchido. A função retorna uma lista com os sucessores."    
     (cond
         (
@@ -116,33 +114,77 @@ Se for Null retorna NIL."
                             (get-node-state node)
                             current-horizontal-length
                             current-vertical-length
+                            player
                         )
                     )
-                    (sucessors-to-horizontal node horizontal-length vertical-length current-horizontal-length (+ current-vertical-length 1))
+                    (sucessors-to-horizontal node player horizontal-length vertical-length current-horizontal-length (+ current-vertical-length 1))
                 )
                 (T
-                    (cons
-                        (new-successor
-                            (draw-horizontal-arc
-                                (get-node-state node)
-                                current-horizontal-length
-                                current-vertical-length
+                    (let
+                        (
+                            (generated-board
+                                (draw-horizontal-arc
+                                    (get-node-state node)
+                                    current-horizontal-length
+                                    current-vertical-length
+                                    player
+                                )
                             )
-                            (+ (get-node-depth node) 1)
-                            node
                         )
-                        (sucessors-to-horizontal node horizontal-length vertical-length current-horizontal-length (+ current-vertical-length 1))
+                        (cons
+
+                            (cond
+                                (
+                                    (= player 1)
+                                    (new-successor
+                                        generated-board
+                                        (+ (get-node-depth node) 1)
+                                        (cond
+                                            (
+                                                (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (+ 1 (get-p1-closed-boxes node))
+                                            )
+                                            (T
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (get-p1-closed-boxes node)
+                                            )
+                                        )
+                                        (get-p2-closed-boxes node)
+                                    )
+                                )
+                                (T
+                                    (new-successor
+                                        generated-board
+                                        (+ (get-node-depth node) 1)
+                                        (get-p1-closed-boxes node)
+                                        (cond
+                                            (
+                                                (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (+ 1 (get-p2-closed-boxes node))
+                                            )
+                                            (T
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (get-p2-closed-boxes node)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                            (sucessors-to-horizontal node player horizontal-length vertical-length current-horizontal-length (+ current-vertical-length 1))
+                        )
                     )
                 )
             )
         )
         (T
-            (sucessors-to-horizontal node horizontal-length vertical-length (+ current-horizontal-length 1) 1)
+            (sucessors-to-horizontal node player horizontal-length vertical-length (+ current-horizontal-length 1) 1)
         )
     )
 )
 
-(defun sucessors-to-vertical (node &optional (horizontal-length (list-length (get-horizontal-arcs (get-node-state node)))) (vertical-length (list-length (get-vertical-arcs (get-node-state node)))) (current-horizontal-length 1) (current-vertical-length 1))
+(defun sucessors-to-vertical (node player &optional (horizontal-length (list-length (get-horizontal-arcs (get-node-state node)))) (vertical-length (list-length (get-vertical-arcs (get-node-state node)))) (current-horizontal-length 1) (current-vertical-length 1))
 "Gera os sucessores da colocação vertical de uma jogada em qualquer nó que ainda não esteja preenchido. A função retorna uma lista com os sucessores."   
     (cond
         (
@@ -158,28 +200,71 @@ Se for Null retorna NIL."
                             (get-node-state node)
                             current-horizontal-length
                             current-vertical-length
+                            player
                         )
                     )
-                    (sucessors-to-vertical node horizontal-length vertical-length (+ current-horizontal-length 1) current-vertical-length)
+                    (sucessors-to-vertical node player horizontal-length vertical-length (+ current-horizontal-length 1) current-vertical-length)
                 )
                 (T
-                    (cons
-                        (new-successor
-                            (draw-vertical-arc
-                                (get-node-state node)
-                                current-horizontal-length
-                                current-vertical-length
+                    (let
+                        (
+                            (generated-board
+                                (draw-vertical-arc
+                                    (get-node-state node)
+                                    current-horizontal-length
+                                    current-vertical-length
+                                    player
+                                )
                             )
-                            (+ (get-node-depth node) 1)
-                            node
                         )
-                        (sucessors-to-vertical node horizontal-length vertical-length (+ current-horizontal-length 1) current-vertical-length)
+                        (cons
+                            (cond
+                                (
+                                    (= player 1)
+                                    (new-successor
+                                        generated-board
+                                        (+ (get-node-depth node) 1)
+                                        (cond
+                                            (
+                                                (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (+ 1 (get-p1-closed-boxes node))
+                                            )
+                                            (T
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (get-p1-closed-boxes node)
+                                            )
+                                        )
+                                        (get-p2-closed-boxes node)
+                                    )
+                                )
+                                (T
+                                    (new-successor
+                                        generated-board
+                                        (+ (get-node-depth node) 1)
+                                        (get-p1-closed-boxes node)
+                                        (cond
+                                            (
+                                                (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (+ 1 (get-p2-closed-boxes node))
+                                            )
+                                            (T
+                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                (get-p2-closed-boxes node)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                            (sucessors-to-vertical node player horizontal-length vertical-length (+ current-horizontal-length 1) current-vertical-length)
+                        )
                     )
                 )
             )
         )
         (T
-            (sucessors-to-vertical node horizontal-length vertical-length 1 (+ current-vertical-length 1))
+            (sucessors-to-vertical node player horizontal-length vertical-length 1 (+ current-vertical-length 1))
         )
     )
 )
