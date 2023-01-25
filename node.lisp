@@ -93,9 +93,9 @@ Se for Null retorna NIL."
     )
 )
 
-(defun get-successors (node)
+(defun get-successors (node player)
 "Obtem e retorna todos os sucessores do no recebidos."
-    (append (funcall 'sucessors-to-horizontal node) (funcall 'sucessors-to-vertical node))
+    (append (funcall 'sucessors-to-horizontal node player) (funcall 'sucessors-to-vertical node player))
 )
 
 (defun sucessors-to-horizontal (node player &optional (horizontal-length (list-length (get-horizontal-arcs (get-node-state node)))) (vertical-length (list-length (get-vertical-arcs (get-node-state node)))) (current-horizontal-length 1) (current-vertical-length 1))
@@ -142,11 +142,9 @@ Se for Null retorna NIL."
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (+ 1 (get-p1-closed-boxes node))
                                             )
                                             (T
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (get-p1-closed-boxes node)
                                             )
                                         )
@@ -161,11 +159,9 @@ Se for Null retorna NIL."
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (+ 1 (get-p2-closed-boxes node))
                                             )
                                             (T
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (get-p2-closed-boxes node)
                                             )
                                         )

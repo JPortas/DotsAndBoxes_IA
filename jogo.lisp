@@ -77,7 +77,7 @@
     ;(funcall 'game-board-to-text (game-board))
     ;(funcall 'new-successor (game-board) 0 NIL)
     (print-sucessors
-        (sucessors-to-horizontal (new-successor (game-board) 0 0 1) 1)
+        (get-successors (new-successor (game-board) 0 0 1) 1)
         ;(funcall 'get-successors 
         ;    (funcall 'new-successor (game-board) 0 NIL)
         ;)
