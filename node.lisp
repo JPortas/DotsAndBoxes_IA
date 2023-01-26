@@ -20,9 +20,9 @@
 
 (in-package :node)
 
-(defun new-successor (board depth p1 p2)
+(defun new-successor (board p1 p2)
 "Cria um novo sucessor em que receber uma tabuleiro, a profundidade, quantas caixas tem o jogador um fechado e quantas o 2 tem fechadas"
-    (list board depth p1 p2)
+    (list board p1 p2)
 )
 
 (defun get-node-state (node)
@@ -35,20 +35,6 @@ Se for Null retorna NIL"
         )
         (
             (car node)
-        )
-    )
-)
-
-(defun get-node-depth (node)
-"Obtém a profundidade de um nó que seria o tabuleiro. Ao seja de um nó ((board) 0 (parent)) ele retorna o 0.
-Se for Null retorna NIL"
-    (cond
-        (
-            (null node)
-            NIL
-        )
-        (T
-            (cadr node)
         )
     )
 )
@@ -75,7 +61,7 @@ Se for Null retorna NIL."
             NIL
         )
         (T
-            (caddr node)
+            (cadr node)
         )
     )
 )
@@ -88,7 +74,7 @@ Se for Null retorna NIL."
             NIL
         )
         (T
-            (cadddr node)
+            (caddr node)
         )
     )
 )
@@ -138,7 +124,6 @@ Se for Null retorna NIL."
                                     (= player 1)
                                     (new-successor
                                         generated-board
-                                        (+ (get-node-depth node) 1)
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
@@ -154,7 +139,6 @@ Se for Null retorna NIL."
                                 (T
                                     (new-successor
                                         generated-board
-                                        (+ (get-node-depth node) 1)
                                         (get-p1-closed-boxes node)
                                         (cond
                                             (
@@ -219,7 +203,6 @@ Se for Null retorna NIL."
                                     (= player 1)
                                     (new-successor
                                         generated-board
-                                        (+ (get-node-depth node) 1)
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
@@ -237,7 +220,6 @@ Se for Null retorna NIL."
                                 (T
                                     (new-successor
                                         generated-board
-                                        (+ (get-node-depth node) 1)
                                         (get-p1-closed-boxes node)
                                         (cond
                                             (
