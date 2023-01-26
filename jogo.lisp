@@ -61,14 +61,14 @@
 	)|#
     '(
         (;arcos horizontais
-            (0 0)
-            (0 0)
-            (0 0)
+            (1 1)
+            (1 0)
+            (2 0)
         )
         (;arcos verticais
-            (0 0)
-            (0 0)
-            (0 0)
+            (1 2)
+            (1 2)
+            (1 0)
         )
     ) 
 )
@@ -103,4 +103,5 @@
     ;)
     ;(funcall 'get-p1-closed-boxes (funcall 'new-successor (game-board) 0 1 4))
     (funcall 'alphabeta-algorithm (new-successor (game-board) 8 4))
+    ;(funcall 'alphabeta-algorithm (new-successor (game-board-test) 0 0))
 )

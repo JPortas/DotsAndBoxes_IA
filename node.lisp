@@ -206,11 +206,11 @@ Se for Null retorna NIL."
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (+ 1 (get-p1-closed-boxes node))
                                             )
                                             (T
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (get-p1-closed-boxes node)
                                             )
                                         )
@@ -224,11 +224,11 @@ Se for Null retorna NIL."
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (+ 1 (get-p2-closed-boxes node))
                                             )
                                             (T
-                                                (format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
+                                                ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 (get-p2-closed-boxes node)
                                             )
                                         )
