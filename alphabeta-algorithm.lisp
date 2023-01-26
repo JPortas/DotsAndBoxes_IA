@@ -8,6 +8,9 @@
         #:alphabeta-algorithm
         #:eval-state
         #:max-value
+        #:best-node-info
+        #:best-node-value
+        #:best-node-node
     )
 )
 
@@ -18,7 +21,7 @@
 )
 
 (defun alphabeta-algorithm(node)
-    (funcall 'alphabeta node 10 most-negative-fixnum most-positive-fixnum T)
+    (funcall 'alphabeta node 15 most-negative-fixnum most-positive-fixnum T)
 )
 
 (defun max-value (v1 v2)
@@ -63,18 +66,19 @@
             v
         )
         (T
-            (let
+            (let*
                 (
-                    (a (max-value alfa (max-value v (funcall 'alphabeta (car sucessores) depth alfa beta NIL))))
+                    (ab (funcall 'alphabeta (car sucessores) depth alfa beta NIL)) ;o ab seria o eval do no a baixo
+                    (a (max-value alfa (max-value v ab)))
                 )
                 (cond
                     (
                         (<= beta a)
-                        (max-value v (funcall 'alphabeta (car sucessores) depth alfa beta NIL))
+                        (max-value v ab)
                     )
                     (T
                         (node-max 
-                            (max-value v (funcall 'alphabeta (car sucessores) depth alfa beta NIL))
+                            (max-value v ab)
                             (cdr sucessores)
                             a
                             beta
@@ -96,18 +100,19 @@
             v
         )
         (T
-            (let
+            (let*
                 (
-                    (b (min-value beta (min-value v (funcall 'alphabeta (car sucessores) depth alfa beta T))))
+                    (ba (funcall 'alphabeta (car sucessores) depth alfa beta T)) ;o ab seria o eval do no a baixo
+                    (b (min-value beta (min-value v ba)))
                 )
                 (cond
                     (
                         (<= b alfa)
-                        (min-value v (funcall 'alphabeta (car sucessores) depth alfa beta T))
+                        (min-value v ba)
                     )
                     (T
                         (node-min
-                            (min-value v (funcall 'alphabeta (car sucessores) depth alfa beta T))
+                            (min-value v ba)
                             (cdr sucessores)
                             alfa
                             b
@@ -181,4 +186,16 @@
             )
         )
     )
+)
+
+(defun best-node-info (v node)
+    (list v node)
+)
+
+(defun best-node-value (best-node-info)
+    (car best-node-info)
+)
+
+(defun best-node-node (best-node-info)
+    (cadr best-node-info)
 )
