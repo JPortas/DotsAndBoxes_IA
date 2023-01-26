@@ -18,7 +18,7 @@
 )
 
 (defun alphabeta-algorithm(node)
-    (funcall 'alphabeta node 20 most-negative-fixnum most-positive-fixnum T)
+    (funcall 'alphabeta node 10 most-negative-fixnum most-positive-fixnum T)
 )
 
 (defun max-value (v1 v2)
@@ -86,26 +86,6 @@
             )
         )
     )
-    #|(cond
-        (
-            (null sucessores)
-            v
-        )
-        (
-            (<= beta (max-value alfa (max-value v (funcall 'alphabeta (car sucessores) alfa beta depth NIL))))
-            (max-value v (funcall 'alphabeta (car sucessores) alfa beta depth NIL))
-        )
-        (T
-            (node-max 
-                (max-value v (funcall 'alphabeta (car sucessores) alfa beta depth NIL))
-                (cdr sucessores)
-                (max-value alfa (max-value v (funcall 'alphabeta (car sucessores) alfa beta depth NIL)))
-                beta
-                depth
-                maximazing-player
-            )
-        )
-    )|#
 )
 
 (defun node-min (v sucessores alfa beta depth maximazing-player)
@@ -139,26 +119,6 @@
             )
         )
     )
-    #|(cond
-        (
-            (null sucessores)
-            v
-        )
-        (
-            (<= (min-value beta (min-value v (funcall 'alphabeta (car sucessores) alfa beta depth T))) alfa)
-            (min-value v (funcall 'alphabeta (car sucessores) alfa beta depth T))
-        )
-        (T
-            (node-min
-                (min-value v (funcall 'alphabeta (car sucessores) alfa beta depth T))
-                (cdr sucessores)
-                alfa
-                (min-value beta (min-value v (funcall 'alphabeta (car sucessores) alfa beta depth T)))
-                depth
-                maximazing-player
-            )
-        )
-    )|#
 )
 
 (defun alphabeta (node depth alpha beta maximazing-player)
