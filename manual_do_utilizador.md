@@ -143,23 +143,25 @@ Score AI1: 0
 Score AI2: 0
 ```
 
+Caso a opção seja inválida ou esteja preenchida aparece `We rejected your play. Please try again!` e o utilizador deverá introduzir outra posição.
+
 No fim aparecerá o vencedor:
 ```console
-■---■───■---■───■---■───■
-│   ¦   ¦   ¦   ¦   ¦   ¦    
-■---■───■---■───■---■───■
-¦   │   │   │   │   │   │    
-■---■───■---■───■---■───■
-¦   ¦   ¦   │   ¦   ¦   ¦    
-■---■───■---■───■---■───■
-│   │   │   │   ¦   │   │    
-■---■───■---■───■---■───■
-│   │   ¦   │   │   │   │    
-■---■───■---■───■---■───■
-AI 1 closed a box! Wait for her to play again...
-AI1 Wins!
-Final Score AI1: 18
-Final Score AI2: 12
+■---■---■───■---■---■---■
+│   ¦   ¦   ¦   ¦   ¦   │
+■───■───■---■---■---■---■
+│   ¦   ¦   ¦   │   ¦   ¦
+■---■---■---■---■---■---■
+│   ¦   │   ¦   ¦   ¦   ¦
+■---■───■---■───■───■---■
+¦   ¦   ¦   │   │   ¦   │
+■───■---■---■---■───■---■
+¦   │   │   ¦   ¦   │   │
+■───■---■---■---■---■───■
+AI closed a box! Wait for her to play again...
+Player 2 Wins!
+Final Score P1: 2
+Final Score P2: 28
 ```
 
 ***Nota: O que aparece na consola pode ser consultado no ficheiro `log.dat`***
