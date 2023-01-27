@@ -215,7 +215,7 @@ inserir `e` para sair"
         (cond
             (
                 (string-equal input-play "e")
-                (write-line "Surrendered!")
+                (write-line "Forfeit!")
                 "exit"
             )
             (
@@ -286,7 +286,7 @@ inserir `e` para sair"
                                     next-move-node
                                 )
                                 (T
-                                    (write-line "We rejected your play. Ples try again but not the same!")
+                                    (write-line "We rejected your play. Please try again!")
                                     (player-turn state-node)
                                 )
                             )
@@ -313,7 +313,7 @@ inserir `e` para sair"
                 (
                     p1-turn
                     (terpri)
-                    (write-line "Its AI [1] turn, please wait some time...")
+                    (write-line "Its AI [1] turn, please wait a little bit...")
                     (let*
                         (
                             (node-board (funcall 'alphabeta-algorithm state-node T 1))
@@ -336,7 +336,7 @@ inserir `e` para sair"
                 )
                 (T
                     (terpri)
-                    (write-line "Its AI [2] turn, please wait some time...")
+                    (write-line "Its AI [2] turn, please wait a little bit...")
                     (let*
                         (
                             (node-board (funcall 'alphabeta-algorithm state-node T 2))
@@ -388,7 +388,7 @@ inserir `e` para sair"
                 (
                     p1-turn
                     (terpri)
-                    (write-line "Your play (h21 or v11):")
+                    (write-line "Your turn (i.e. h21 or v11):")
                     (let*
                         (
                             (node-board (player-turn state-node))
@@ -409,7 +409,7 @@ inserir `e` para sair"
                 )
                 (T
                     (terpri)
-                    (write-line "Its AI turn, please wait some time...")
+                    (write-line "Its AI turn, please wait a little bit...")
                     (let*
                         (
                             (node-board (funcall 'alphabeta-algorithm state-node T 2))

@@ -45,6 +45,104 @@
     (funcall 'alphabeta node 15 most-negative-fixnum most-positive-fixnum maximazing-player player)
 )
 
+(defun bubble-aux (lista player)
+    (cond
+        (
+            (null (cdr lista))
+            lista
+        )
+        (
+            (< (eval-state (car lista) player) (eval-state (cadr lista) player))
+            (cons (car lista) (bubble-aux (cdr lista) player))
+        )
+        (t
+            (cons (cadr lista) (bubble-aux (cons (car lista) (cddr lista)) player))
+        )
+    )
+)
+
+(defun bubble-sort (lista size player)
+    (cond 
+        (
+            (null lista)
+            NIL
+        )
+        (
+            (null (cdr lista))
+            lista
+        )
+        (
+            (= size 1)
+            (bubble-aux lista player)
+        )
+        (t
+            (bubble-sort (bubble-aux lista player) (- size 1) player)
+        )
+    
+    )
+)
+
+(defun successor-sort (successor player)
+    (cond
+        (
+            (null successor)
+            NIL
+        )
+        (T
+            (bubble-sort successor (length successor) player)
+        )
+    )
+)
+
+(defun bubble-aux-dec (lista player)
+    (cond
+        (
+            (null (cdr lista))
+            lista
+        )
+        (
+            (> (eval-state (car lista) player) (eval-state (cadr lista) player))
+            (cons (car lista) (bubble-aux-dec (cdr lista) player))
+        )
+        (t
+            (cons (cadr lista) (bubble-aux-dec (cons (car lista) (cddr lista)) player))
+        )
+    )
+)
+
+(defun bubble-sort-dec (lista size player)
+    (cond 
+        (
+            (null lista)
+            NIL
+        )
+        (
+            (null (cdr lista))
+            lista
+        )
+        (
+            (= size 1)
+            (bubble-aux-dec lista player)
+        )
+        (t
+            (bubble-sort-dec (bubble-aux-dec lista player) (- size 1) player)
+        )
+    
+    )
+)
+
+(defun successor-sort-dec (successor player)
+    (cond
+        (
+            (null successor)
+            NIL
+        )
+        (T
+            (bubble-sort-dec successor (length successor) player)
+        )
+    )
+)
+
 (defun max-value (v1 v2)
 "Retorna o maior valor entre dois números"
     (cond
@@ -207,7 +305,7 @@ player 1 ou 2 e retorna o inverso."
                     (let
                         (
                             (v (best-node-info most-negative-fixnum NIL))
-                            (successors (funcall 'get-successors node player))
+                            (successors (successor-sort-dec (funcall 'get-successors node player) player))
                         )
                         (cond
                             (
@@ -233,7 +331,7 @@ player 1 ou 2 e retorna o inverso."
                     (let
                         (
                             (v (best-node-info most-positive-fixnum NIL))
-                            (successors (funcall 'get-successors node (player-numbers-handler player)))
+                            (successors (successor-sort (funcall 'get-successors node (player-numbers-handler player)) (player-numbers-handler player)))
                         )
                         (cond
                             (

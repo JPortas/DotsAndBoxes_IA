@@ -59,74 +59,110 @@ Este ficheiro vai conter os seguintes atributos:
 Após executar `(start)` irá aparecer o seguinte ecrã:
 
 ```console
-Welcome to IA 0.1 :)
-Qual a posição do problema?
+1. Human vs AI
+2. AI vs AI
+3. Quit
+
+Digit an options and press ENTER:
 ```
 
-O utilizador deve introduzir a posição do problema (número).
+O utilizador deverá escolher o modo de jogo.
 
-Caso não exista nenhum problema nessa posição é novamente pedido ao utilizador a posição.
+Caso coloque uma opção inválida irá aparecer: `Invalid entered option! Try again.` e o utilizador deverá escolher outra opção.
+
+## Opção 1:
+
+Este modo de jogo será entre a AI e o utilizador.
+Começa por pedir ao utilizador para escolher quem quer que faça a primeira jogada:
 
 ```console
-Essa posição não existe
-Qual a posição do problema?
+******************* -[ Human vs AI Mode ]- *******************
+Wich one should start? Enter (1) for you and (2) for IA:
 ```
 
-O mesmo acontece caso o utilizador use letras em vez de números.
-
-De seguida é pedido o algoritmo de procura:
+Depois de escolhido quem começa primeiro o jogo começa:
+***Nota este exemplo é do jogador a começar 1º - O utilizador é identificado por P1***
 
 ```console
-Que algoritmo quer usar para procurar? 
-1- Procura na largura
-2- Procura na profundidade
-3- A*
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+Score P1: 0
+Score P2: 0
+Your turn (i.e. h21 or v11):
 ```
 
-*Nota* caso o valor seja maior que o permitido é assumido a última opção. Caso não seja um número é pedido outra vez uma opção.
-
-Depois de escolhido o algoritmo o programa pede a profundidade caso seja **Procura em profundidade** e caso seja o **A Estrela**
+Agora o jogador deverá introduzir a sua jogada no seguinte formato: `direcao linha coluna` (sem espaços), sendo direcao entre [h;v], linha entre [n;n+1] e coluna até m.
+***Nota: as linhas e colunas variam de acordo com a direção - o exemplo dado é para horizontais. Para verticais as linhas seriam até n e as coluna entre [m;m+1]***
+Ou seja, para se colocar uma linha horizontal na 1ª coluna na 2ª linha seria: `h21`, que resultava no seguinte tabuleiro:
 
 ```console
-Qual a profundidade limite?
+■   ■   ■   ■   ■   ■   ■
+
+■───■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+
+■   ■   ■   ■   ■   ■   ■
+Score P1: 0
+Score P2: 0
 ```
 
-Por fim é mostrado o resultado e estatísticas de desempenho da busca com o algoritmo escolhido e essa busca é gravada no ficheiro `desempenho.dat`
+## Opção 2:
+
+É um modo de jogo automático onde 2 AI's (CPU's) competem entre si para ver qual consegue fechar o maior número de caixas.
+Irá aparecer algo deste gênero:
 
 ```console
-Board: (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
-Objetivo:4
-Algoritmo: DFS
-Profundidade: 5
-Resultado da procura: ((((1 0 0) (0 1 1) (0 1 1) (0 1 1))
-                        ((0 0 0) (0 1 1) (0 1 1) (0 1 1)))
-                       5
-                       ((((1 0 0) (0 1 1) (0 1 1) (0 1 1))
-                         ((0 0 0) (0 1 1) (0 0 1) (0 1 1)))
-                        4
-                        ((((1 0 0) (0 1 1) (0 1 1) (0 1 1))
-                          ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
-                         3
-                         ((((1 0 0) (0 1 1) (0 1 1) (0 0 1))
-                           ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
-                          2
-                          ((((1 0 0) (0 0 1) (0 1 1) (0 0 1))
-                            ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
-                           1
-                           ((((0 0 0) (0 0 1) (0 1 1) (0 0 1))
-                             ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
-                            0 NIL))))))
-Total de nós gerados: 3741
-Total de nós expandidos: 307
-Ramificação: 3729/307
-Tabuleiro solução: (((1 0 0) (0 1 1) (0 1 1) (0 1 1))
-                    ((0 0 0) (0 1 1) (0 1 1) (0 1 1)))
-Evaluation took:
-  0.065 seconds of real time
-  0.062500 seconds of total run time (0.062500 user, 0.000000 system)
-  95.38% CPU
-  145,411,677 processor cycles
-  4,128,608 bytes consed
+******************* -[ AI vs AI Mode ]- *******************
 
-NIL
+■   ■   ■   ■   ■   ■   ■
+                             
+■   ■   ■   ■   ■   ■   ■
+                             
+■   ■   ■   ■   ■   ■   ■
+                             
+■   ■   ■   ■   ■   ■   ■
+                             
+■   ■   ■   ■   ■   ■   ■
+                             
+■   ■   ■   ■   ■   ■   ■
+Score AI1: 0
+Score AI2: 0
 ```
+
+No fim aparecerá o vencedor:
+```console
+■---■───■---■───■---■───■
+│   ¦   ¦   ¦   ¦   ¦   ¦    
+■---■───■---■───■---■───■
+¦   │   │   │   │   │   │    
+■---■───■---■───■---■───■
+¦   ¦   ¦   │   ¦   ¦   ¦    
+■---■───■---■───■---■───■
+│   │   │   │   ¦   │   │    
+■---■───■---■───■---■───■
+│   │   ¦   │   │   │   │    
+■---■───■---■───■---■───■
+AI 1 closed a box! Wait for her to play again...
+AI1 Wins!
+Final Score AI1: 18
+Final Score AI2: 12
+```
+
+***Nota: O que aparece na consola pode ser consultado no ficheiro `log.dat`***
+
+## Opção 3:
+Esta opção serve para abandonarmos o programa
