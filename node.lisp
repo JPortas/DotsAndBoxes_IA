@@ -57,7 +57,7 @@ Se for Null retorna NIL."
 (defun draw-arc (node orientation pos1 pos2 player)
     (cond
         (
-            (string-equal orientation "horizontal")
+            (string-equal orientation "h")
             (draw-horizontal-arc
                 (get-node-state node)
                 pos1
