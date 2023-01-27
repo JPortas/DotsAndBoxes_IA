@@ -457,7 +457,7 @@ inserir `e` para sair"
 
 (defun first-to-play ()
 "Pede ao utilizador qual será o primeiro jogador a jogar."
-    (write-line "How gonna play first? Enter (1) for you and (2) for IA:")
+    (write-line "Wich one should start? Enter (1) for you and (2) for IA:")
     (let
         (
             (input-choise (read-line *standard-input*))
@@ -497,15 +497,25 @@ inserir `e` para sair"
                     (
                         (p1-turn (first-to-play))
                     )
-                    (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-empty) 0 0))))
-                    (game (new-successor (game-board-empty) 0 0) p1-turn)
+                    (let*
+                        (
+                            (game-board (new-successor (game-board-empty) 0 0))
+                        )
+                        (format T "~d~%" (funcall 'game-board-to-text (car game-board)))
+                        (game game-board p1-turn)
+                    )
                 )
             )
             (
                 (string-equal selected-option "2")
                 (write-line "******************* -[ AI vs AI Mode ]- *******************")
-                (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-empty) 0 0))))
-                (game-ia (new-successor (game-board-empty) 0 0) NIL)
+                (let*
+                    (
+                        (game-board (new-successor (game-board-empty) 0 0))
+                    )
+                    (format T "~d~%" (funcall 'game-board-to-text (car game-board)))
+                    (game-ia game-board NIL)
+                )
             )
             (
                 (string-equal selected-option "3")
