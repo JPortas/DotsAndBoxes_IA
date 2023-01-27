@@ -11,6 +11,7 @@
         #:best-node-info
         #:best-node-value
         #:best-node-node
+        #:player-numbers-handler
     )
 )
 
@@ -28,12 +29,20 @@
     (cadr best-node-info)
 )
 
-(defun eval-state (node)
-    (- (funcall 'get-p2-closed-boxes node) (funcall 'get-p1-closed-boxes node))
+(defun eval-state (node player)
+    (cond
+        (
+            (= player 2)
+            (- (funcall 'get-p2-closed-boxes node) (funcall 'get-p1-closed-boxes node))
+        )
+        (T
+            (- (funcall 'get-p1-closed-boxes node) (funcall 'get-p2-closed-boxes node))
+        )
+    )
 )
 
-(defun alphabeta-algorithm(node)
-    (funcall 'alphabeta node 15 most-negative-fixnum most-positive-fixnum T)
+(defun alphabeta-algorithm(node maximazing-player player)
+    (funcall 'alphabeta node 15 most-negative-fixnum most-positive-fixnum maximazing-player player)
 )
 
 (defun max-value (v1 v2)
@@ -70,7 +79,7 @@
     )
 )
 
-(defun node-max (v sucessores alfa beta depth maximazing-player)
+(defun node-max (v sucessores alfa beta depth maximazing-player player)
 "Percorre a lista de sucessores que seria o max e retorna a melhor avaliação de baixo para cima."
     (cond
         (
@@ -83,7 +92,7 @@
                 (
                     (v-value (best-node-value v))
                     (v-node (best-node-node v))
-                    (ab (best-node-value (funcall 'alphabeta (car sucessores) depth alfa beta NIL))) ;o ab seria o eval do no a baixo
+                    (ab (best-node-value (funcall 'alphabeta (car sucessores) depth alfa beta NIL player))) ;o ab seria o eval do no a baixo
                     (a (max-value alfa (max-value v-value ab)))
                 )
                 (cond
@@ -100,6 +109,7 @@
                                 beta
                                 (- depth 1)
                                 maximazing-player
+                                player
                         )
                     )
                     (T
@@ -110,6 +120,7 @@
                             beta
                             (- depth 1)
                             maximazing-player
+                            player
                         )
                     )
                 )
@@ -118,7 +129,7 @@
     )
 )
 
-(defun node-min (v sucessores alfa beta depth maximazing-player)
+(defun node-min (v sucessores alfa beta depth maximazing-player player)
 "Percorre a lista de sucessores que seria o min e retorna a melhor avaliação de baixo para cima."
     (cond
         (
@@ -131,7 +142,7 @@
                 (
                     (v-value (best-node-value v))
                     (v-node (best-node-node v))
-                    (ba (best-node-value (funcall 'alphabeta (car sucessores) depth alfa beta T))) ;o ab seria o eval do no a baixo
+                    (ba (best-node-value (funcall 'alphabeta (car sucessores) depth alfa beta T player))) ;o ab seria o eval do no a baixo
                     (b (min-value beta (min-value v-value ba)))
                 )
                 (cond
@@ -148,6 +159,7 @@
                             b
                             (- depth 1)
                             maximazing-player
+                            player
                         )
                     )
                     (T
@@ -158,6 +170,7 @@
                             b
                             (- depth 1)
                             maximazing-player
+                            player
                         )
                     )
                 )
@@ -166,11 +179,25 @@
     )
 )
 
-(defun alphabeta (node depth alpha beta maximazing-player)
+(defun player-numbers-handler (max-player-number)
+"Para poder alterar o tipo de linha esta função recebe se o max é o
+player 1 ou 2 e retorna o inverso."
+    (cond
+        (
+            (= max-player-number 1)
+            2
+        )
+        (T
+            1
+        )
+    )
+)
+
+(defun alphabeta (node depth alpha beta maximazing-player player)
     (cond
         (
             (<= depth 0)
-            (best-node-info (eval-state node) node)
+            (best-node-info (eval-state node player) node)
             ;(eval-state node)
         )
         (T
@@ -180,7 +207,7 @@
                     (let
                         (
                             (v (best-node-info most-negative-fixnum NIL))
-                            (successors (funcall 'get-successors node 2))
+                            (successors (funcall 'get-successors node player))
                         )
                         (cond
                             (
@@ -192,11 +219,12 @@
                                     beta
                                     (- depth 1)
                                     maximazing-player
+                                    player
                                 )
                             )
                             (T
                                 ;(eval-state node)
-                                (best-node-info (eval-state node) node)
+                                (best-node-info (eval-state node player) node)
                             )
                         )
                     )
@@ -205,7 +233,7 @@
                     (let
                         (
                             (v (best-node-info most-positive-fixnum NIL))
-                            (successors (funcall 'get-successors node 1))
+                            (successors (funcall 'get-successors node (player-numbers-handler player)))
                         )
                         (cond
                             (
@@ -217,11 +245,12 @@
                                     beta
                                     (- depth 1)
                                     maximazing-player
+                                    player
                                 )
                             )
                             (T
                                 ;(eval-state node)
-                                (best-node-info (eval-state node) node)
+                                (best-node-info (eval-state node player) node)
                             )
                         )
                     )
