@@ -1,5 +1,5 @@
 ;;;; game-console.lisp
-;;;; Responsável por criar, produzir registar dados relaticamente á situação do jogo.
+;;;; Responsável por criar, produzir registar dados relativamente à situação do jogo.
 ;;;; Autor: Lucas Freixieiro e João Portas
 
 (defpackage :game-console
