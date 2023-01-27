@@ -1,19 +1,32 @@
-# Capa
+# **Projeto Nº 2:** Época Normal
 
-* Unidade Curricular: Inteligência Artificial
-* Alunos:
+<hr/>
+
+![capa](./pics/capa.png)
+
+<hr/>
+
+**Unidade Curricular: Inteligência Artificial**
+* **Professor**:
+    * Eng. Filipe Mariano
+
+* **Alunos**:
 
   * João Portas - 202002475
   * Lucas Freixieiro - 202002193
 
-## Introdução
+<br>
+
+# Introdução
 
 Este programa foi elaborado para a unidade curricular de inteligência artificial e tem o propósito de colocar em pratica o aprendido durante as aulas.
 Este programa tem como objetivo simular o jogo Dots and Boxes, havendo então 2 modos de jogo, CPU vs Humano e CPU vs CPU.
 As jogadas do CPU são feitas com base no algoritmo alfabeta.
 O algoritmo alfabeta vai permitir ao CPU avaliar as suas jogadas e tentar assim decidir a que vai ter melhor resultados.
 
-## Instalação e utilização
+<br>
+
+# Instalação e utilização
 
 Para o desenvolvimento foi utilizado o SBCL com a consola do VSCode.
 Se tiver o SBCL instalado é possível correr o projeto com:
@@ -25,7 +38,9 @@ sbcl --load .\jogo.lisp --eval '(in-package #:jogo)'
 para executar o programa no geral e poder utilizar funções na consola.
 De seguida basta escrever `(start)` na consola e temos o programa a correr.
 
-## Input/Output
+<br>
+
+# Input/Output
 
 Com o programa a correr o utilizador vai ter de inserir na consola o modo de jogo (usando valores numéricos).
 
@@ -37,7 +52,9 @@ Este ficheiro vai conter os seguintes atributos:
  - Número de cortes efetuados (de cada tipo)
  - Tempo gasto
 
-## Exemplo de aplicação
+<br>
+
+# Exemplo de aplicação
 
 Após executar `(start)` irá aparecer o seguinte ecrã:
 
