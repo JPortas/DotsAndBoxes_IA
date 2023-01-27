@@ -122,7 +122,7 @@
     ;)
     ;(funcall 'get-p1-closed-boxes (funcall 'new-successor (game-board) 0 1 4))
     ;(funcall 'alphabeta-algorithm (new-successor (game-board) 8 4))
-    (let*
+    #|(let*
         (
             (jg0 (funcall 'get-node-state (new-successor (game-board) 8 4)))
             (jg1 (cadr (funcall 'alphabeta-algorithm (new-successor (game-board) 8 4))))
@@ -139,7 +139,7 @@
                     (funcall 'get-node-state (cadr jg2))
                 )
             )
-    )
+    )|#
     
     ;(funcall 'alphabeta-algorithm (new-successor (game-board-test-empty) 0 0))
 )
@@ -162,8 +162,6 @@
 em que a primeira é a direção a segunda a posição 1 e a treçeira posição 2.
 Output: ('h' '1' '2')
 inserir `e` para sair"
-    (terpri)
-    (write-line "Your play (h21 or v11):")
     (let
         (
             (input-play (read-line *standard-input*))
@@ -195,18 +193,26 @@ inserir `e` para sair"
         (cond
             (
                 (= player 1)
-                (funcall 'new-successor
-                    new-board
-                    (cond
-                        (
-                            (> (funcall 'get-number-of-closed-boxes new-board) (funcall 'get-number-of-closed-boxes current-board))
-                            (+ 1 (funcall 'get-p1-closed-boxes node))
-                        )
-                        (T
-                            (funcall 'get-p1-closed-boxes node)
+                (cond ;Jogada válida
+                    (
+                        new-board
+                        (funcall 'new-successor
+                            new-board
+                            (cond
+                                (
+                                    (> (funcall 'get-number-of-closed-boxes new-board) (funcall 'get-number-of-closed-boxes current-board))
+                                    (+ 1 (funcall 'get-p1-closed-boxes node))
+                                )
+                                (T
+                                    (funcall 'get-p1-closed-boxes node)
+                                )
+                            )
+                            (funcall 'get-p2-closed-boxes node)
                         )
                     )
-                    (funcall 'get-p2-closed-boxes node)
+                    (T ;Jogada inválida
+                        NIL
+                    )
                 )
             )
             (T
@@ -219,22 +225,25 @@ inserir `e` para sair"
 (defun player-turn (state-node)
     (let*
                 (
-                    (state state-node)
                     (player-input (funcall 'get-player-input))
-                )
-                (format NIL "~d"
-                    (funcall 'game-board-to-text
-                        (funcall 'get-node-state state)
-                    )
                 )
                 (cond
                     (
                         (listp player-input)
                         (let*
                             (
-                                (next-move-node (do-play-player state-node (car player-input) (parse-integer (cadr player-input)) (parse-integer (cadr player-input)) 1))
+                                (next-move-node (do-play-player state-node (car player-input) (parse-integer (cadr player-input)) (parse-integer (caddr player-input)) 1))
                             )
-                            next-move-node
+                            (cond
+                                (
+                                    (not (null next-move-node))
+                                    next-move-node
+                                )
+                                (T
+                                    (write-line "We rejected your play. Ples try again but not the same!")
+                                    (player-turn state-node)
+                                )
+                            )
                         )
                     )
                     (T
@@ -249,22 +258,78 @@ inserir `e` para sair"
             )
 )
 
-(defun game(state-node p1-turn)
+(defun game(state-node p1-turn &optional (end-game NIL))
     (cond
         (
-            p1-turn
-            (let
+            (not end-game)
+            (format T "Score P1: ~d~%Score P2: ~d" (funcall 'get-p1-closed-boxes state-node) (funcall 'get-p2-closed-boxes state-node))
+            (cond
                 (
-                    (node-board (player-turn state-node))
+                    p1-turn
+                    (terpri)
+                    (write-line "Your play (h21 or v11):")
+                    (let*
+                        (
+                            (node-board (player-turn state-node))
+                            (end-game (funcall 'full-boardp (funcall 'get-node-state node-board)))
+                        )
+                        (format T "~d~%" (funcall 'game-board-to-text (car node-board)))
+                        (cond
+                            (
+                                (> (funcall 'get-p1-closed-boxes node-board) (funcall 'get-p1-closed-boxes state-node))
+                                (write-line "You closed a box! Do another play.")
+                                (game node-board T end-game)
+                            )
+                            (T
+                                (game node-board NIL end-game)
+                            )
+                        )
+                    )
                 )
-                (format T "~d~%" (funcall 'game-board-to-text (car node-board)))
-                (game node-board T)
+                (T
+                    (terpri)
+                    (write-line "Its the playing, pleas wait some time...")
+                    (let*
+                        (
+                            (node-board (funcall 'alphabeta-algorithm state-node))
+                            (board (funcall 'get-node-state (cadr node-board)))
+                            (end-game (funcall 'full-boardp board))
+                        )
+                        (format T "~d~%" (funcall 'game-board-to-text board))
+                        (cond
+                            (
+                                (> (funcall 'get-p2-closed-boxes (cadr node-board)) (funcall 'get-p2-closed-boxes state-node))
+                                (write-line "AI closed a box! Wait for her to play again...")
+                                (game (cadr node-board) NIL end-game)
+                            )
+                            (T
+                                (game (cadr node-board) T end-game)
+                            )
+                        )
+                        ;(game (cadr node-board) T)
+                    )                    
+                )
             )
         )
-        (T
-            "CPU TURN"
+        (T ;game end
+            (cond
+                (
+                    (> (funcall 'get-p1-closed-boxes state-node) (funcall 'get-p2-closed-boxes state-node))
+                    (write-line "Player 1 Wins!")
+                    (format T "Final Score P1: ~d~%Final Score P2: ~d" (funcall 'get-p1-closed-boxes state-node) (funcall 'get-p2-closed-boxes state-node))
+                )
+                (
+                    (> (funcall 'get-p2-closed-boxes state-node) (funcall 'get-p1-closed-boxes state-node))
+                    (write-line "Player 2 Wins!")
+                    (format T "Final Score P1: ~d~%Final Score P2: ~d" (funcall 'get-p1-closed-boxes state-node) (funcall 'get-p2-closed-boxes state-node))
+                )
+                (T
+                    (write-line "Its a draw!")
+                )
+            )
         )
     )
+    
 
     
 )
@@ -285,6 +350,7 @@ inserir `e` para sair"
             (
                 (string-equal selected-option "1")
                 (write-line "******************* -[ Human vs AI Mode ]- *******************")
+                (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-test-empty) 0 0))))
                 (game (new-successor (game-board-test-empty) 0 0) T)
             )
             (

@@ -16,6 +16,7 @@
         #:get-p1-closed-boxes
         #:get-p2-closed-boxes
         #:draw-arc
+        #:full-boardp
     )
 )
 
@@ -50,6 +51,20 @@ Se for Null retorna NIL."
         )
         (T
             (last node)
+        )
+    )
+)
+
+(defun full-boardp (board)
+    (cond
+        (
+            (> (funcall 'count-zeros board) 0)
+            (format t "board: ~d~%" board)
+            (format t "count: ~d~%" (funcall 'count-zeros board))
+            NIL
+        )
+        (T
+            T
         )
     )
 )
@@ -150,7 +165,7 @@ Se for Null retorna NIL."
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (+ 1 (get-p1-closed-boxes node))
+                                                (+ (- (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node))) (get-p1-closed-boxes node))
                                             )
                                             (T
                                                 (get-p1-closed-boxes node)
@@ -166,7 +181,7 @@ Se for Null retorna NIL."
                                         (cond
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (+ 1 (get-p2-closed-boxes node))
+                                                (+ (- (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node))) (get-p2-closed-boxes node))
                                             )
                                             (T
                                                 (get-p2-closed-boxes node)
@@ -230,7 +245,7 @@ Se for Null retorna NIL."
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (+ 1 (get-p1-closed-boxes node))
+                                                (+ (- (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node))) (get-p1-closed-boxes node))
                                             )
                                             (T
                                                 ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
@@ -248,7 +263,7 @@ Se for Null retorna NIL."
                                             (
                                                 (>  (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
                                                 ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))
-                                                (+ 1 (get-p2-closed-boxes node))
+                                                (+ (- (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node))) (get-p2-closed-boxes node))
                                             )
                                             (T
                                                 ;(format t "~d > ~d ~%" (get-number-of-closed-boxes generated-board) (get-number-of-closed-boxes (get-node-state node)))

@@ -98,7 +98,7 @@ Return:
 "
 	(cond
 		(
-			(or (null orientation-list) (< row 1) (< col 1))
+			(or (null orientation-list) (< row 1) (< col 1) (> row (length orientation-list)) (> col (length (car orientation-list))))
 			nil
 		)
 		(T

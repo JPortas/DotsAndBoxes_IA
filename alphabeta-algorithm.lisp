@@ -29,7 +29,7 @@
 )
 
 (defun eval-state (node)
-    (- (funcall 'get-p1-closed-boxes node) (funcall 'get-p2-closed-boxes node))
+    (- (funcall 'get-p2-closed-boxes node) (funcall 'get-p1-closed-boxes node))
 )
 
 (defun alphabeta-algorithm(node)
@@ -180,7 +180,7 @@
                     (let
                         (
                             (v (best-node-info most-negative-fixnum NIL))
-                            (successors (funcall 'get-successors node 1))
+                            (successors (funcall 'get-successors node 2))
                         )
                         (cond
                             (
@@ -205,7 +205,7 @@
                     (let
                         (
                             (v (best-node-info most-positive-fixnum NIL))
-                            (successors (funcall 'get-successors node 2))
+                            (successors (funcall 'get-successors node 1))
                         )
                         (cond
                             (
