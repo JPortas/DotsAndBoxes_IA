@@ -16,6 +16,18 @@
 
 (in-package :alphabeta-algorithm)
 
+(defun best-node-info (v node)
+    (list v node)
+)
+
+(defun best-node-value (best-node-info)
+    (car best-node-info)
+)
+
+(defun best-node-node (best-node-info)
+    (cadr best-node-info)
+)
+
 (defun eval-state (node)
     (- (funcall 'get-p1-closed-boxes node) (funcall 'get-p2-closed-boxes node))
 )
@@ -63,22 +75,36 @@
     (cond
         (
             (null sucessores)
+            ;(best-node-info v (best-node-value best-node))
             v
         )
         (T
             (let*
                 (
-                    (ab (funcall 'alphabeta (car sucessores) depth alfa beta NIL)) ;o ab seria o eval do no a baixo
-                    (a (max-value alfa (max-value v ab)))
+                    (v-value (best-node-value v))
+                    (v-node (best-node-node v))
+                    (ab (best-node-value (funcall 'alphabeta (car sucessores) depth alfa beta NIL))) ;o ab seria o eval do no a baixo
+                    (a (max-value alfa (max-value v-value ab)))
                 )
                 (cond
                     (
                         (<= beta a)
-                        (max-value v ab)
+                        (best-node-info (max-value v-value ab) v-node)
+                    )
+                    (
+                        (> a alfa)
+                        (node-max
+                            (best-node-info (max-value v-value ab) (car sucessores))
+                                (cdr sucessores)
+                                a
+                                beta
+                                (- depth 1)
+                                maximazing-player
+                        )
                     )
                     (T
                         (node-max 
-                            (max-value v ab)
+                            (best-node-info (max-value v-value ab) v-node)
                             (cdr sucessores)
                             a
                             beta
@@ -98,21 +124,35 @@
         (
             (null sucessores)
             v
+            ;(best-node-info v (best-node-node best-node))
         )
         (T
             (let*
                 (
-                    (ba (funcall 'alphabeta (car sucessores) depth alfa beta T)) ;o ab seria o eval do no a baixo
-                    (b (min-value beta (min-value v ba)))
+                    (v-value (best-node-value v))
+                    (v-node (best-node-node v))
+                    (ba (best-node-value (funcall 'alphabeta (car sucessores) depth alfa beta T))) ;o ab seria o eval do no a baixo
+                    (b (min-value beta (min-value v-value ba)))
                 )
                 (cond
                     (
                         (<= b alfa)
-                        (min-value v ba)
+                        (best-node-info (min-value v-value ba) v-node)
+                    )
+                    (
+                        (< b beta)
+                        (node-min
+                            (best-node-info (min-value v-value ba) (car sucessores))
+                            (cdr sucessores)
+                            alfa
+                            b
+                            (- depth 1)
+                            maximazing-player
+                        )
                     )
                     (T
                         (node-min
-                            (min-value v ba)
+                            (best-node-info (min-value v-value ba) v-node)
                             (cdr sucessores)
                             alfa
                             b
@@ -130,7 +170,8 @@
     (cond
         (
             (<= depth 0)
-            (eval-state node)
+            (best-node-info (eval-state node) node)
+            ;(eval-state node)
         )
         (T
             (cond
@@ -138,7 +179,7 @@
                     maximazing-player
                     (let
                         (
-                            (v most-negative-fixnum)
+                            (v (best-node-info most-negative-fixnum NIL))
                             (successors (funcall 'get-successors node 1))
                         )
                         (cond
@@ -154,7 +195,8 @@
                                 )
                             )
                             (T
-                                (eval-state node)
+                                ;(eval-state node)
+                                (best-node-info (eval-state node) node)
                             )
                         )
                     )
@@ -162,7 +204,7 @@
                 (T
                     (let
                         (
-                            (v most-positive-fixnum)
+                            (v (best-node-info most-positive-fixnum NIL))
                             (successors (funcall 'get-successors node 2))
                         )
                         (cond
@@ -178,7 +220,8 @@
                                 )
                             )
                             (T
-                                (eval-state node)
+                                ;(eval-state node)
+                                (best-node-info (eval-state node) node)
                             )
                         )
                     )
@@ -186,16 +229,4 @@
             )
         )
     )
-)
-
-(defun best-node-info (v node)
-    (list v node)
-)
-
-(defun best-node-value (best-node-info)
-    (car best-node-info)
-)
-
-(defun best-node-node (best-node-info)
-    (cadr best-node-info)
 )

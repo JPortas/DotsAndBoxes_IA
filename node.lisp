@@ -15,6 +15,7 @@
         #:count-zeros
         #:get-p1-closed-boxes
         #:get-p2-closed-boxes
+        #:draw-arc
     )
 )
 
@@ -49,6 +50,28 @@ Se for Null retorna NIL."
         )
         (T
             (last node)
+        )
+    )
+)
+
+(defun draw-arc (node orientation pos1 pos2 player)
+    (cond
+        (
+            (string-equal orientation "horizontal")
+            (draw-horizontal-arc
+                (get-node-state node)
+                pos1
+                pos2
+                player
+            )
+        )
+        (T
+            (draw-vertical-arc
+                (get-node-state node)
+                pos1
+                pos2
+                player
+            )
         )
     )
 )
