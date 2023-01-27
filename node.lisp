@@ -59,8 +59,6 @@ Se for Null retorna NIL."
     (cond
         (
             (> (funcall 'count-zeros board) 0)
-            (format t "board: ~d~%" board)
-            (format t "count: ~d~%" (funcall 'count-zeros board))
             NIL
         )
         (T

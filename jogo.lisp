@@ -23,6 +23,7 @@
     (:export
         #:jogar
         #:game-board
+        #:first-to-play
     )
 )
 
@@ -454,12 +455,34 @@ inserir `e` para sair"
     
 )
 
+(defun first-to-play ()
+"Pede ao utilizador qual será o primeiro jogador a jogar."
+    (write-line "How gonna play first? Enter (1) for you and (2) for IA:")
+    (let
+        (
+            (input-choise (read-line *standard-input*))
+        )
+        (cond
+            (
+                (string-equal input-choise "1")
+                T
+            )
+            (
+                (string-equal input-choise "2")
+                NIL
+            )
+            (T
+                (write-line "Invalid option! Try again.")
+                (first-to-play)
+            )
+        )
+    )
+)
+
 (defun options-menu()
     (write-line "1. Human vs AI")
     (write-line "2. AI vs AI")
-    (write-line "3. Quit from the school")
-    (write-line "4. Escape to a paralel world")
-    (write-line "5. Quit")
+    (write-line "3. Quit")
     (terpri)
     (write-line "Digit an options and press ENTER:")
     (let 
@@ -470,17 +493,23 @@ inserir `e` para sair"
             (
                 (string-equal selected-option "1")
                 (write-line "******************* -[ Human vs AI Mode ]- *******************")
-                (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-test-3x3) 0 0))))
-                (game (new-successor (game-board-test-3x3) 0 0) T)
+                (let*
+                    (
+                        (p1-turn (first-to-play))
+                    )
+                    (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-empty) 0 0))))
+                    (game (new-successor (game-board-empty) 0 0) p1-turn)
+                )
             )
             (
                 (string-equal selected-option "2")
-                (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-test-3x3) 0 0))))
-                (game-ia (new-successor (game-board-test-3x3) 0 0) T)
+                (write-line "******************* -[ AI vs AI Mode ]- *******************")
+                (format T "~d~%" (funcall 'game-board-to-text (car (new-successor (game-board-empty) 0 0))))
+                (game-ia (new-successor (game-board-empty) 0 0) NIL)
             )
             (
                 (string-equal selected-option "3")
-                (write-line "We are gone")
+                (write-line "Bye bye")
             )
             (t
                 (write-line "Invalid entered option! Try again.")
@@ -492,5 +521,7 @@ inserir `e` para sair"
 
 
 (defun start()
+    (dribble "log.dat")
     (options-menu)
+    (dribble)
 )
